@@ -1,11 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+
+import './static/index.css';
+import './static/skeleton/index.min.css';
+
+import Header from './parts/Header';
+import Content from './parts/Content';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Header />
+    <Content />
   </React.StrictMode>,
-  document.getElementById('root')
+  document.querySelector('.app')
 );
