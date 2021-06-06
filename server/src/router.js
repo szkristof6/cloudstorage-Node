@@ -9,13 +9,9 @@ const router = Router();
 
 router.get('/', async (req, res, next) => {
     try {
-        const dirs = await Directories.find();
         const files = await Files.find();
 
-        res.json({
-            dirs,
-            files
-        });
+        res.json(files);
     } catch (error) {
         next(error);
     }
