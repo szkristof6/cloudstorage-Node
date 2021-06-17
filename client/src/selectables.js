@@ -6,9 +6,8 @@
  *   https://github.com/p34eu/Selectables.git
  */
 
-class Selectables {
+export class Selectables {
     constructor(opts) {
-        'use strict';
         let defaults = {
             zone: "#wrapper",
             elements: "a",
@@ -46,7 +45,6 @@ class Selectables {
         this.enable = function () {
             if (this.on) {
                 throw new Error(this.constructor.name + " :: is alredy enabled");
-                return;
             }
             this.zone = document.querySelector(this.options.zone);
             if (!this.zone) {
@@ -150,23 +148,39 @@ class Selectables {
                 x2 = e.pageX,
                 y2 = e.pageY;
             if (x1 > x2) {
-                tmp = x2, x2 = x1, x1 = tmp;
+                tmp = x2;
+                x2 = x1;
+                x1 = tmp;
             }
             if (y1 > y2) {
-                tmp = y2, y2 = y1, y1 = tmp;
+                tmp = y2;
+                y2 = y1;
+                y1 = tmp;
             }
 
             let left = border.offsetLeft;
 
 
             if (x1 > left && y1 > border.offsetTop) {
-                g.style.left = x1 + 'px', g.style.top = y1 + 'px', g.style.width = (x2 - x1) + 'px', g.style.height = (y2 - y1) + 'px';
+                g.style.left = x1 + 'px';
+                g.style.top = y1 + 'px';
+                g.style.width = (x2 - x1) + 'px';
+                g.style.height = (y2 - y1) + 'px';
             } else if (x1 < left && y1 < border.offsetTop) {
-                g.style.left = left + 'px', g.style.top = border.offsetTop + 'px', g.style.width = (x2 - left) + 'px', g.style.height = (y2 - border.offsetTop) + 'px';
+                g.style.left = left + 'px';
+                g.style.top = border.offsetTop + 'px';
+                g.style.width = (x2 - left) + 'px';
+                g.style.height = (y2 - border.offsetTop) + 'px';
             } else if (x1 < left) {
-                g.style.left = left + 'px', g.style.top = y1 + 'px', g.style.width = (x2 - left) + 'px', g.style.height = (y2 - y1) + 'px';
+                g.style.left = left + 'px';
+                g.style.top = y1 + 'px';
+                g.style.width = (x2 - left) + 'px';
+                g.style.height = (y2 - y1) + 'px';
             } else if (y1 < border.offsetTop) {
-                g.style.left = x1 + 'px', g.style.top = border.offsetTop + 'px', g.style.width = (x2 - x1) + 'px', g.style.height = (y2 - border.offsetTop) + 'px';
+                g.style.left = x1 + 'px';
+                g.style.top = border.offsetTop + 'px';
+                g.style.width = (x2 - x1) + 'px';
+                g.style.height = (y2 - border.offsetTop) + 'px';
             }
         };
         this.options.selectables = this;

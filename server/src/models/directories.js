@@ -19,6 +19,7 @@ const requiredString = {
 }
 
 const DirectoriesSchema = new Schema({
+    dir_id: requiredString,
     name: requiredString,
     path: {
         type: Array,

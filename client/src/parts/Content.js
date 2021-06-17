@@ -1,4 +1,3 @@
-//import { useState, useEffect } from 'react';
 
 import Navigation from './Navigation';
 import Area from './Area';

@@ -1,6 +1,31 @@
-//import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { getStorage } from '../API';
+
+
+const humanReadableByte = (fileSizeInBytes) => {
+  let i = -1;
+  const byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
+  do {
+      fileSizeInBytes = fileSizeInBytes / 1024;
+      i++;
+  } while (fileSizeInBytes > 1024);
+
+  return Math.max(fileSizeInBytes, 0.1).toFixed(0) + byteUnits[i];
+};
 
 const Navigation = () => {
+  const [ storage, setStorage ] = useState([]);
+
+    useEffect(() => {
+      const fetchStorage = async () => {
+        const query = await getStorage();
+        setStorage(query);
+      };
+      
+    fetchStorage();
+    }, []);
+
+
   return (
     <div className="navbar">
       <div className="dropdown" id="new">
@@ -21,8 +46,8 @@ const Navigation = () => {
         <li><a href="#"><i className="far fa-hdd"></i> Tárhely</a></li>
       </ul>
       <div className="storage">
-        <progress className="progress is-link" value="15" max="100">15%</progress>
-        30 TB  / 200 PB felhasználva
+        <progress className="progress is-link" value={storage.remaining} max={storage.size}>{(storage.size/storage.remaining).toFixed(0)}</progress>
+        {humanReadableByte(storage.remaining)} / {humanReadableByte(storage.size)} felhasználva
       </div>
     </div>
   );
