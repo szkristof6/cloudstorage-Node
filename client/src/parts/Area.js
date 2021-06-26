@@ -9,19 +9,24 @@ const Area = () => {
     const [ selected, setSelected ] = useState([]);
 
     const location = useLocation().pathname.split('/');
-    const [pageID, setPageID] = useState('');
+    const [pageID, setPageID] = useState(location.pop());
 
-    useEffect(() => setPageID(location.pop()), [location]);
+    const [ pageData, setPageData ] = useState([]);
 
     return (
         <div className="area">
-            {loading ? <div className="loader toltes"></div> : null}
+            {loading && <div className="loader toltes"></div>}
             <form className="a-form" method="post" encType="multipart/form-data" style={{display: 'block'}}>
             <div className="file-area">
                 <div className="file-menu">
                     <div className="tabs is-boxed">
                         <ul>
-                            <li><a>Saját mappa</a></li>
+                            {
+                                pageData.length > 0 &&
+                                pageData[0].path.map((path, index) => (
+                                    <li key={index}><a>{path}</a></li>
+                                ))
+                            }
                         </ul>
                     </div>
                     <div className="info">
@@ -31,7 +36,7 @@ const Area = () => {
                         <div className="i-icon"><i className="fas fa-info-circle" aria-hidden="true"></i></div>
                     </div>
                 </div>
-                <FilePanel pageID={pageID} setLoading={setLoading} selected={selected} setSelected={setSelected} />
+                <FilePanel pageID={pageID} setLoading={setLoading} selected={selected} setSelected={setSelected} setPageData={setPageData} />
                 <InfoPanel />
             </div>
             <input type="file" id="file" style={{display: 'none'}} webkitdirectory="" directory="" multiple="" />

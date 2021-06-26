@@ -2,29 +2,101 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { listAll } from '../../API';
-import { Selectables } from '../../selectables';
+import Selectable from 'selectable.js';
 
-const FilePanel = ({pageID, setLoading, selected, setSelected}) => {
-    const [ data, setData ] = useState([]);
+
+const FilePanel = ({pageID, setLoading, setSelected, setPageData}) => {
+    const [ folders, setFolders ] = useState([]);
+    const [ files, setFiles ] = useState([]);
     const [ settings, setSettings ] = useState({
-        sortType: "DESC",
-        dropdowns: [],
-        sortIcon: null,
-
+        sortDesc: true,
+        sortType: 'name'
     });
 
     const getData = async () => {
         const query = await listAll(pageID);
-        setData(query);
+
+        const {queryData, queryItems} = query;
+
+        setPageData(queryData);
+        setFolders(queryItems.dirs);
+        setFiles(queryItems.files);
+
+        const selectionArea = document.querySelector("#dragarea");
+        const selectableItems = selectionArea.querySelectorAll(".grid-item");
+
+        const selectable = new Selectable({
+                filter: selectableItems,
+                appendTo: selectionArea,
+                autoScroll: {
+                    threshold: 0,
+                    increment: 20,
+                },
+                lasso: {
+                    zIndex: 10,
+                    border: "1px solid #d4d4d4",
+                    background: "rgba(194, 194, 194, 0.1)",
+                    boxShadow: "0px 0px 5px 3px rgba(244, 244, 244, 1)",
+                },
+                toggle: true,
+                ignore: ['.order i', '.order span'],
+                saveState: true,
+                autoRefresh: true,
+        });
+
+        selectable.on("start", () => {
+            const selectedItems = selectable.getSelectedItems();
+            selectable.deselect(selectedItems);
+
+            setSelected([]);
+        });
+
+        selectable.on("end", (_, selection) => {
+            const newSelected = [];
+            selection.forEach(select => {
+                const {node} = select;
+                const link = node.querySelector("a");
+
+                const splitted = link.href.split("/");
+                const data = {
+                    type: splitted[4],
+                    id: splitted[5],
+                    elem: link
+                };
+                newSelected.push(data);
+                
+            });
+            setSelected(newSelected);
+        });
+
+
         setLoading(false);
     }
 
-    useEffect(() => {
-        getData();
-    
-        
+    useEffect(() => getData(), [pageID]);
 
-    }, [pageID]);
+    const sortByName = (x, y) => {
+        let a = x.name.toUpperCase(),
+            b = y.name.toUpperCase();
+
+        if(settings.sortDesc)
+            return a === b ? 0 : a > b ? 1 : -1;
+        return a === b ? 0 : a > b ? -1 : 1;
+    }
+
+    const changeSort = () => {
+        setSettings({
+            ...settings,
+            sortDesc: !settings.sortDesc,
+        });
+
+        folders.sort(sortByName);
+        setFolders(folders);
+
+        files.sort(sortByName);
+        setFiles(files);
+
+    };
 
     return (
         <div className="file-panel">
@@ -34,15 +106,15 @@ const FilePanel = ({pageID, setLoading, selected, setSelected}) => {
                         <div className="m-name">Mappák</div>
                         <div className="order">
                             <span className="o-type">Név</span>
-                                <i className="fas fa-arrow-up" aria-hidden="true"></i>
+                            { settings.sortDesc ? <i onClick={changeSort} className="fas fa-arrow-up"></i> : <i onClick={changeSort} className="fas fa-arrow-down"></i> }
                         </div>
                     </div>
                     <div className="grid">
                         {
-                        data.dirs ? data.dirs.map(dir => (
+                        folders ? folders.map(dir => (
                             <div className="grid-item" key={dir._id}>
-                                <Link className="button" to={`/drive/folder/${dir._id}`} >
-                                    <i className="fas fa-folder" aria-hidden="true"></i>
+                                <Link className="button" onClick={e => e.preventDefault()} onDoubleClick={e => console.log(e)} to={`/drive/folder/${dir._id}`} >
+                                    <i className="fas fa-folder"></i>
                                     <span className="r-text">{dir.name}</span>
                                 </Link>
                             </div>
@@ -56,13 +128,13 @@ const FilePanel = ({pageID, setLoading, selected, setSelected}) => {
                     </div>
                     <div className="grid">
                         {
-                        data.files ? data.files.map(file => (
+                        files ? files.map(file => (
                             <div className="grid-item" key={file._id}>
                                 <div className="preview">
-                                    <i className="far fa-file-audio" aria-hidden="true"></i>
+                                    <i className="far fa-file-audio"></i>
                                 </div>
-                                <Link className="button" to={`/drive/file/${file._id}`} >
-                                    <i className="far fa-file-audio" aria-hidden="true"></i>
+                                <Link className="button" onClick={e => e.preventDefault()} to={`/drive/file/${file._id}`} >
+                                    <i className="fas fa-file-audio"></i>
                                     <span className="r-text">{file.name}</span>
                                 </Link>
                             </div>

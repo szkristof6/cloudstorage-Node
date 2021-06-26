@@ -5,7 +5,7 @@ export async function listAll(pageID) {
     return response.json();
 }
 
-export async function getStorage(){
+export async function getStorage() {
     const response = await fetch(`${API_URL}/api/getStorage`);
     return response.json();
 }

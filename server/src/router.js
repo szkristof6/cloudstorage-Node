@@ -1,10 +1,11 @@
-const {
-    Router
-} = require('express');
+const { Router } = require('express');
 const checkDiskSpace = require('check-disk-space').default
 
 const Files = require('./models/files');
 const Directories = require('./models/directories');
+
+const { createDirectory } = require('./functions/directory');
+const { fileUpload } = require('./functions/file');
 
 const router = Router();
 
@@ -12,12 +13,28 @@ router.get('/', async (req, res, next) => {
     try {
         const pageID = req.query.pageID === 'my-drive' ? 0 : req.query.pageID;
 
-        const files = await Files.find({'dir_id': pageID});
-        const dirs = await Directories.find({'dir_id': pageID});
+        const files = await Files.find(
+            {'dir_id': pageID},
+            '_id in_trash name',
+            (_, {_id, in_trash, name}) => ({_id, in_trash, name}));
+
+        const dirs = await Directories.find(
+            {'dir_id': pageID},
+            '_id in_trash name',
+            (_, {_id, in_trash, name}) => ({_id, in_trash, name}));
+
+        const dir = pageID !== 0 ? await Directories.find(
+                {'dir_id': pageID},
+                'path',
+                (_, {path}) => ({path}))
+            : [{'path': ['Saját mappa']}];
 
         res.json({
-            files,
-            dirs
+            'queryItems': {
+                files,
+                dirs
+            },
+            'queryData': dir
         });
     } catch (error) {
         next(error);
@@ -37,59 +54,7 @@ router.get('/getStorage', async (req, res, next) => {
     }
 })
 
-const findUpperDir = async (req) => {
-    const path = [...req.body.path];
-    const folder = path.pop();
-
-    //console.log(`path: ${path}, folder: ${folder}`);
-
-    const query = await Directories.find({
-        'path': path,
-        'name': folder,
-    }, '_id', (_, dir) => {
-        return dir._id;
-    });
-
-    return query[0] !== undefined ? query[0]._id : 0;
-}
-
-router.post('/file_upload', async (req, res, next) => {
-    try {
-
-        const dir_id = await findUpperDir(req);
-
-        const fileEntry = new Files({
-            ...req.body,
-            dir_id,
-        });
-
-        const createdEntry = await fileEntry.save();
-        res.json(createdEntry)
-    } catch (error) {
-        if (error.name === 'ValidationError') {
-            res.status(422);
-        }
-        next(error);
-    }
-});
-
-router.post('/create_directory', async (req, res, next) => {
-    try {
-        const dir_id = await findUpperDir(req);
-
-        const directoryEntry = new Directories({
-            ...req.body,
-            dir_id
-        });
-
-        const createdEntry = await directoryEntry.save();
-        res.json(createdEntry)
-    } catch (error) {
-        if (error.name === 'ValidationError') {
-            res.status(422);
-        }
-        next(error);
-    }
-});
+router.post('/file_upload', fileUpload);
+router.post('/create_directory', createDirectory);
 
 module.exports = router;
