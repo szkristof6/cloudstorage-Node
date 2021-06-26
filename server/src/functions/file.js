@@ -1,6 +1,8 @@
 const Files = require('../models/files');
 const Directories = require('../models/directories');
 
+const iconByFormat = require('../formats');
+
 const findUpperDir = async (req) => {
     const path = [...req.body.path];
     const folder = path.pop();
@@ -21,6 +23,9 @@ const fileUpload = async (req, res, next) => {
     try {
 
         const dir_id = await findUpperDir(req);
+        const icon = iconByFormat(req.body);
+
+        req.body.meta = {...req.body.meta, ...icon};
 
         const fileEntry = new Files({
             ...req.body,

@@ -1,6 +1,8 @@
 const Files = require('../models/files');
 const Directories = require('../models/directories');
 
+const iconByFormat = require('../formats');
+
 const findUpperDir = async (req) => {
     const path = [...req.body.path];
     const folder = path.pop();
@@ -10,9 +12,7 @@ const findUpperDir = async (req) => {
     const query = await Directories.find({
         'path': path,
         'name': folder,
-    }, '_id', (_, dir) => {
-        return dir._id;
-    });
+    }, '_id');
 
     return query[0] !== undefined ? query[0]._id : 0;
 }

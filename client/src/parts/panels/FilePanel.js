@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
+
 
 import { listAll } from '../../API';
 import Selectable from 'selectable.js';
-
 
 const FilePanel = ({pageID, setLoading, setSelected, setPageData}) => {
     const [ folders, setFolders ] = useState([]);
@@ -131,10 +132,10 @@ const FilePanel = ({pageID, setLoading, setSelected, setPageData}) => {
                         files ? files.map(file => (
                             <div className="grid-item" key={file._id}>
                                 <div className="preview">
-                                    <i className="far fa-file-audio"></i>
+                                    <i className={file.meta.icon}></i>
                                 </div>
                                 <Link className="button" onClick={e => e.preventDefault()} to={`/drive/file/${file._id}`} >
-                                    <i className="fas fa-file-audio"></i>
+                                    <i className={file.meta.icon}></i>
                                     <span className="r-text">{file.name}</span>
                                 </Link>
                             </div>

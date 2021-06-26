@@ -15,24 +15,24 @@ router.get('/', async (req, res, next) => {
 
         const files = await Files.find(
             {'dir_id': pageID},
-            '_id in_trash name',
-            (_, {_id, in_trash, name}) => ({_id, in_trash, name}));
+            '_id in_trash name meta',
+            (error, _) => { if (error) next(error) });
 
         const dirs = await Directories.find(
             {'dir_id': pageID},
             '_id in_trash name',
-            (_, {_id, in_trash, name}) => ({_id, in_trash, name}));
+            (error, _) => { if (error) next(error) });
 
         const dir = pageID !== 0 ? await Directories.find(
                 {'dir_id': pageID},
                 'path',
-                (_, {path}) => ({path}))
+                (error, _) => { if (error) next(error) })
             : [{'path': ['Saját mappa']}];
 
         res.json({
             'queryItems': {
-                files,
-                dirs
+                files: files.filter(x => !x.in_trash),
+                dirs: dirs.filter(x => !x.in_trash)
             },
             'queryData': dir
         });

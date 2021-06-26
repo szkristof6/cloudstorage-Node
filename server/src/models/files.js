@@ -43,6 +43,8 @@ const FilesSchema = new Schema({
             type: Date,
             required: true
         },
+        icon: requiredString,
+        name: requiredString,
     },
     share: {
         mode: {
