@@ -2,27 +2,15 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 
-
-import { listAll } from '../../API';
 import Selectable from 'selectable.js';
 
-const FilePanel = ({pageID, setLoading, setSelected, setPageData}) => {
-    const [ folders, setFolders ] = useState([]);
-    const [ files, setFiles ] = useState([]);
+const FilePanel = ({pageID, loading, setSelected, setFolders, setFiles, folders, files}) => {
     const [ settings, setSettings ] = useState({
         sortDesc: true,
         sortType: 'name'
     });
 
-    const getData = async () => {
-        const query = await listAll(pageID);
-
-        const {queryData, queryItems} = query;
-
-        setPageData(queryData);
-        setFolders(queryItems.dirs);
-        setFiles(queryItems.files);
-
+    const setSelectable = () => {
         const selectionArea = document.querySelector("#dragarea");
         const selectableItems = selectionArea.querySelectorAll(".grid-item");
 
@@ -69,12 +57,9 @@ const FilePanel = ({pageID, setLoading, setSelected, setPageData}) => {
             });
             setSelected(newSelected);
         });
+    };
 
-
-        setLoading(false);
-    }
-
-    useEffect(() => getData(), [pageID]);
+    useEffect(() => !loading && setSelectable(), [loading, pageID]);
 
     const sortByName = (x, y) => {
         let a = x.name.toUpperCase(),

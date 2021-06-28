@@ -11,7 +11,7 @@ Project Description
 - [ ] contentMenu  
 - [ ] Share  
 - [ ] Shared  
-- [ ] Location links  
+- [x] Location links  
 - [ ] Dropzone.js  
 - [ ] Sortable.js  
 - [ ] Drag 'n Drop  
