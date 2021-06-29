@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 
 import Selectable from 'selectable.js';
 
-const FilePanel = ({pageID, loading, setSelected, setFolders, setFiles, folders, files}) => {
+const FilePanel = ({pageID, setPageID, loading, setSelected, setFolders, setFiles, folders, files}) => {
     const [ settings, setSettings ] = useState({
         sortDesc: true,
         sortType: 'name'
@@ -84,6 +84,8 @@ const FilePanel = ({pageID, loading, setSelected, setFolders, setFiles, folders,
 
     };
 
+    const history = useHistory();
+
     return (
         <div className="file-panel">
             <div className="dragarea" id="dragarea">
@@ -99,7 +101,10 @@ const FilePanel = ({pageID, loading, setSelected, setFolders, setFiles, folders,
                         {
                         folders ? folders.map(dir => (
                             <div className="grid-item" key={dir._id}>
-                                <Link className="button" onClick={e => e.preventDefault()} onDoubleClick={e => console.log(e)} to={`/drive/folder/${dir._id}`} >
+                                <Link className="button" onClick={e => e.preventDefault()} onDoubleClick={() => {
+                                    history.push(`/drive/folder/${dir._id}`);
+                                    setPageID(dir._id)
+                                    }} to={`/drive/folder/${dir._id}`} >
                                     <i className="fas fa-folder"></i>
                                     <span className="r-text">{dir.name}</span>
                                 </Link>

@@ -18,7 +18,7 @@ Project Description
 - [ ] Info panel  
 - [ ] Sort by type  
 - [ ] List view  
-- [ ] onDoubleClick Event  
+- [x] onDoubleClick Event  
 - [ ] Dropdown menus  
 - [ ] Authorization  
 - [ ] Trash  

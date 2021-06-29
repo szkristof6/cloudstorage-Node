@@ -61,7 +61,7 @@ const Area = () => {
                         <div className="i-icon"><i className="fas fa-info-circle" aria-hidden="true"></i></div>
                     </div>
                 </div>
-                <FilePanel pageID={pageID} loading={loading} setSelected={setSelected} setFolders={setFolders} setFiles={setFiles} folders={folders} files={files} />
+                <FilePanel pageID={pageID} setPageID={setPageID} loading={loading} setSelected={setSelected} setFolders={setFolders} setFiles={setFiles} folders={folders} files={files} />
                 <InfoPanel selected={selected} folders={folders} files={files} />
             </div>
             <input type="file" id="file" style={{display: 'none'}} webkitdirectory="" directory="" multiple="" />
