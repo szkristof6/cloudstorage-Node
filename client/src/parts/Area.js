@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 
-import FilePanel from './panels/FilePanel';
+import Dragarea from './panels/Dragarea';
 import InfoPanel from './panels/InfoPanel';
 
 import { listAll } from '../API';
@@ -17,6 +17,42 @@ const Area = () => {
     const [ pageData, setPageData ] = useState([]);
     const [ folders, setFolders ] = useState([]);
     const [ files, setFiles ] = useState([]);
+
+    const [ settings, setSettings ] = useState({
+        sortDesc: true,
+        sortType: 'name',
+        InfoPanelOn: false,
+    });
+
+    const sortByName = (x, y) => {
+        let a = x.name.toUpperCase(),
+            b = y.name.toUpperCase();
+
+        if(settings.sortDesc)
+            return a === b ? 0 : a > b ? 1 : -1;
+        return a === b ? 0 : a > b ? -1 : 1;
+    }
+
+    const changeSort = () => {
+        setSettings({
+            ...settings,
+            sortDesc: !settings.sortDesc,
+        });
+
+        folders.sort(sortByName);
+        setFolders(folders);
+
+        files.sort(sortByName);
+        setFiles(files);
+
+    };
+
+    const openInfo = () => {
+        setSettings({
+            ...settings,
+            InfoPanelOn: !settings.InfoPanelOn
+        });
+    }
 
     useEffect(() => getData(), [pageID]);
 
@@ -55,14 +91,42 @@ const Area = () => {
                         </ul>
                     </div>
                     <div className="info">
+                        {
+                            selected.length === 1 && 
+                            <div className="i-icon">
+                                <i className="fas fa-share-square" title={`${selected.length} elem megosztása`} aria-hidden="true"></i>
+                            </div>
+                        }
+                        {
+                            selected.length > 0 && 
+                            <>
+                            <div className="i-icon">
+                                <i className="fas fa-trash" title={`${selected.length} elem törlése`} aria-hidden="true"></i>
+                            </div>
+                            <div className="i-icon">
+                                <i className="fas fa-download" title={`${selected.length} elem letöltése`} aria-hidden="true"></i>
+                            </div>
+                            <div className="i-icon">
+                                <i className="fas fa-ellipsis-v" title={`További műveletek`} aria-hidden="true"></i>
+                            </div>
+
+                            <div className="v-divider"></div>
+                            </>
+                        }
+
                         <div className="i-icon">
-                            <i className="fas fa-bars" aria-hidden="true"></i>
+                            <i className="fas fa-bars" title={`Listanézet`} aria-hidden="true"></i>
                         </div>
-                        <div className="i-icon"><i className="fas fa-info-circle" aria-hidden="true"></i></div>
+                        <div className={`i-icon ${settings.InfoPanelOn && 'active'}`} onClick={openInfo}>
+                            <i className="fas fa-info-circle" title={`Részletek megjelenítése`} aria-hidden="true"></i>
+                        </div>
                     </div>
                 </div>
-                <FilePanel pageID={pageID} setPageID={setPageID} loading={loading} setSelected={setSelected} setFolders={setFolders} setFiles={setFiles} folders={folders} files={files} />
-                <InfoPanel selected={selected} folders={folders} files={files} />
+                <div className="file-panel">
+                    <Dragarea pageID={pageID} setPageID={setPageID} loading={loading} setSelected={setSelected} changeSort={changeSort} settings={settings} folders={folders} files={files} />
+                    <InfoPanel selected={selected} folders={folders} files={files} settings={settings} selected={selected} pageData={pageData} closeInfo={openInfo} />
+                </div>
+
             </div>
             <input type="file" id="file" style={{display: 'none'}} webkitdirectory="" directory="" multiple="" />
             </form>

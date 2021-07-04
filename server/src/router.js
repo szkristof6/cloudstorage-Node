@@ -56,7 +56,7 @@ router.get('/', async (req, res, next) => {
         const files = await Files.find({
                 'dir_id': pageID
             },
-            '_id in_trash name meta',
+            '_id in_trash name meta user createdAt updatedAt',
             (error, _) => {
                 if (error) next(error)
             });
@@ -64,7 +64,7 @@ router.get('/', async (req, res, next) => {
         const dirs = await Directories.find({
                 'dir_id': pageID
             },
-            '_id in_trash name',
+            '_id in_trash name user createdAt updatedAt',
             (error, _) => {
                 if (error) next(error)
             });

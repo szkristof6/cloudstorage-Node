@@ -15,7 +15,7 @@ Project Description
 - [ ] Dropzone.js  
 - [ ] Sortable.js  
 - [ ] Drag 'n Drop  
-- [ ] Info panel  
+- [x] Info panel  
 - [ ] Sort by type  
 - [ ] List view  
 - [x] onDoubleClick Event  

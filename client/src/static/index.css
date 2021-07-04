@@ -661,11 +661,12 @@ progress {
     font-size: larger;
 }
 
-.i-preview i {
+.i-preview i{
     padding: 80px 0;
     font-size: 100px;
+    width: 100%;
+    text-align: center;
 }
-
 
 
 .i-share,

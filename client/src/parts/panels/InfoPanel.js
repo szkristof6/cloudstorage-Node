@@ -1,28 +1,90 @@
-//import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
-
-const InfoPanel = () => {
-    /*
-      const [ entries, setEntries ] = useState([]);
+const InfoPanel = ({settings, closeInfo, selected, pageData, files, folders}) => {
+  const [infoItem, setInfoItem] = useState(null);
 
   useEffect(() => {
-    (async () => {
-      const logEntries = await listLogEntries();
-      setEntries(logEntries);
-    })();
-  }, []);
-    */ 
+    if(pageData.length > 0){
+      const item = selected.length > 0 ? 
+        selected[0].type === 'file' ? 
+          files.filter(x => x._id === selected[0].id)[0] 
+          : folders.filter(x => x._id === selected[0].id)[0]
+      : pageData[pageData.length - 1][0];
+
+      setInfoItem(item)
+    }
+  }, [pageData, selected]);
+
+  const humanReadableByte = (fileSizeInBytes) => {
+    let i = -1;
+    const byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
+    do {
+        fileSizeInBytes = fileSizeInBytes / 1024;
+        i++;
+    } while (fileSizeInBytes > 1024);
+  
+    return Math.max(fileSizeInBytes, 0.1).toFixed(0) + byteUnits[i];
+  };
+
+  const getDate = (date) => {
+    const dateObj = new Date(date);
+    const month = dateObj.toLocaleString('default', { month: 'short' });
+    const day = dateObj.getUTCDate();
+    const year = dateObj.getUTCFullYear();
+
+    return `${year}. ${month} ${day}.`;
+  }
+
   return (
-    <div className="info_panel">
+    <div className={`info_panel ${settings.InfoPanelOn ? 'active' : 'back'}`}>
         <div className="i-header">
-            <i className="fas fa-folder" aria-hidden="true"></i>
-            <span>Saját mappa</span>
-            <i className="fas fa-times" aria-hidden="true"></i>
+            <i className={infoItem !== null ? infoItem.meta ? infoItem.meta.icon : 'fas fa-folder' : 'Töltés...'} aria-hidden="true"></i>
+            <span>
+              {
+                infoItem !== null ? infoItem.name : 'Töltés...'
+              }
+            </span>
+            <i className="fas fa-times" onClick={closeInfo} aria-hidden="true"></i>
         </div>
-        <div className="i-init">
-            <i className="fab fa-chromecast" aria-hidden="true"></i>
+        {
+          infoItem !== null ? 
+            infoItem.meta ? 
+            <div className="details">
+              <div className="i-preview">
+                <i className={infoItem.meta.icon} aria-hidden="true"></i>
+              </div>
+              <div className="i-share"></div>
+              <div className="i-elem">
+                <div className="ie-nev">Típus:</div>
+                <div className="ie-ertek">{infoItem.meta.type}</div>
+              </div>
+              <div className="i-elem">
+                <div className="ie-nev">Méret:</div>
+                <div className="ie-ertek">{`${humanReadableByte(infoItem.meta.size)} (${infoItem.meta.size.toLocaleString()} bájt)`}</div>
+              </div>
+              <div className="i-elem">
+                <div className="ie-nev">Hely:</div>
+                <div className="ie-ertek">{pageData[pageData.length - 1][0].name}</div>
+              </div>
+              <div className="i-elem">
+                <div className="ie-nev">Tulajdonos:</div>
+                <div className="ie-ertek">{infoItem.user}</div>
+              </div>
+              <div className="i-elem">
+                <div className="ie-nev">Készült:</div>
+                <div className="ie-ertek">{getDate(infoItem.createdAt)}</div>
+              </div>
+              <div className="i-elem">
+                <div className="ie-nev">Módosult:</div>
+                <div className="ie-ertek">{getDate(infoItem.updatedAt)}</div>
+              </div>
+            </div>
+            : <div className="i-init">
+              <i className="fab fa-chromecast" aria-hidden="true"></i>
             <div className="ii-text">Ha látni szeretnéd egy fájl, vagy mappa részleteit, kattints rá</div>
         </div>
+          : 'Töltés...'
+        }
     </div>
   );
 }
