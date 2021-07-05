@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 import { Form, Formik, Field, ErrorMessage } from 'formik';
 import { useState, useContext } from 'react';
 import { Redirect } from 'react-router-dom';
-import { APIFetch } from '../services/Public';
+import { PublicFetch } from '../services/API';
 import { AuthContext } from '../services/authContext';
 import Message from './form/Message';
 import Logo from '../static/Logo.png';
@@ -23,7 +23,7 @@ const Register = () => {
     const submitCredentials = async credentials => {
         try {
             setRegisterLoading(true);
-            const { data } = await APIFetch.post('register', credentials);
+            const { data } = await PublicFetch.post('register', credentials);
 
             authContext.setAuthState(data);
             setRegisterError(null);

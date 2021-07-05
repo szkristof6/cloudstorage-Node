@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { AuthContext } from '../services/authContext';
+import { FetchContext } from '../services/FetchContext';
 
-import { APIFetch } from '../services/Public';
+import { APIFetch } from '../services/API';
 import { humanReadableByte } from '../global';
 
 const navItems = [
@@ -31,15 +32,16 @@ const navItems = [
 const Navigation = () => {
   const [ storage, setStorage ] = useState([]);
 
-    const fetchStorage = async () => {
-      const { data } = await APIFetch.get('getStorage');
+  const auth = useContext(AuthContext);
+  const fetchContext = useContext(FetchContext);
+  const { role } = auth.authState.userInfo;
+
+    const fetchStorage = useCallback(async () => {
+      const { data } = await fetchContext.authAxios.get('getStorage');
       setStorage(data);
-    };
+    });
 
     useEffect(() => fetchStorage(), []);
-
-    const auth = useContext(AuthContext);
-    const { role } = auth.authState.userInfo;
 
   return (
     <div className="navbar">

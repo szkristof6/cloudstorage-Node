@@ -20,10 +20,11 @@ const createToken = user => {
     }
     return jwt.sign({
             sub: user._id,
+            username: user.username,
             email: user.email,
             role: user.role,
-            iss: 'api.orbit',
-            aud: 'api.orbit'
+            iss: 'api.cloud.szkt',
+            aud: 'api.cloud.szkt'
         },
         process.env.JWT_SECRET, {
             algorithm: 'HS256',

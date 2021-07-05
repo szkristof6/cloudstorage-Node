@@ -7,18 +7,16 @@ const { Provider } = AuthContext;
 const AuthProvider = ({children}) => {
 		const history = useHistory();
 
-    const token = localStorage.getItem('token');
     const expiresAt = localStorage.getItem('expiresAt');
     const userInfo = localStorage.getItem('userInfo');
 
     const [authState, setAuthState] = useState({
-        token,
+        token: null,
         expiresAt,
         userInfo: userInfo ? JSON.parse(userInfo) : {}
     });
 
     const setAuthInfo = ({token, userInfo, expiresAt}) => {
-        localStorage.setItem('token', token);
         localStorage.setItem('expiresAt', expiresAt);
         localStorage.setItem('userInfo', JSON.stringify(userInfo));
         setAuthState({
@@ -29,7 +27,6 @@ const AuthProvider = ({children}) => {
     };
 
 		const logout = () => {
-			localStorage.removeItem('token');
 			localStorage.removeItem('expiresAt');
 			localStorage.removeItem('userInfo');
 
@@ -42,12 +39,14 @@ const AuthProvider = ({children}) => {
 
 		};
 
-		const isAuthenticated = () => {
-			if(authState.token || !authState.expiresAt) {
-				return false;
-			}
-			return new Date.getTime() / 1000 < authState.expiresAt;
-		};
+		  const isAuthenticated = () => {
+    if (!authState.expiresAt) {
+      return false;
+    }
+    return (
+      new Date().getTime() / 1000 < authState.expiresAt
+    );
+  };
 
 		const isAdmin = () => {
 			return authState.userInfo.role === 'admin';

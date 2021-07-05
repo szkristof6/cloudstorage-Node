@@ -43,6 +43,10 @@ const login = async (req, res, next) => {
             const decodedToken = jwtDecode(token);
             const expiresAt = decodedToken.exp;
 
+            res.cookie('token', token, {
+                httpOnly: true
+            });
+
             return res.json({
                 message: 'Sikeres belépés!',
                 token,
@@ -54,8 +58,6 @@ const login = async (req, res, next) => {
             .status(403)
             .json({ message: 'Rossz felhasználónév vagy jelszó' });
         }
-
-        res.json(user)
     } catch (error) {
         if (error.name === 'ValidationError') {
             res.status(422);
@@ -96,8 +98,8 @@ const register = async (req, res, next) => {
             active: true,
             login_ip: requestIP.getClientIp(req)
         };
-
-        const existingUser = await UserData.findOne({
+        
+        /* const existingUser = await UserData.findOne({
             email: user.email
         }).lean();
 
@@ -105,7 +107,7 @@ const register = async (req, res, next) => {
             return res
             .status(400)
             .json({ message: 'Már létezik ez a fiók' });
-        }
+        }*/
 
         const newUser = new UserData(user);
         const savedUser = await newUser.save();
@@ -115,10 +117,14 @@ const register = async (req, res, next) => {
             const decodedToken = jwtDecode(token);
             const expiresAt = decodedToken.exp; 
 
+            res.cookie('token', token, {
+                httpOnly: true
+            });
+
             return res.json({
                 message: 'User sikeresen létrehozva!',
                 token,
-                user: {
+                userInfo: {
                     username: savedUser.username,
                     email: savedUser.email,
                     role: savedUser.role,

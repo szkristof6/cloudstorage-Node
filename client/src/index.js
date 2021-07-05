@@ -1,45 +1,68 @@
-import React, {Suspense} from 'react';
+import React, {Suspense, useContext, lazy} from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 
 import './static/index.css';
 import './static/fontawesome/css/all.min.css';
-
-import Header from './parts/Header';
-import Content from './parts/Content';
-import Login from './parts/Login';
-import Register from './parts/Register';
+import 'bulma-pageloader';
 
 import {
   AuthProvider,
   AuthContext
 } from './services/authContext';
+import { FetchProvider } from './services/FetchContext';
 
-const UnauthenticatedRoutes = () => {
-  <Switch>
-    <Route path="/login" exact >
-        <Login />
-      </Route>
-      <Route path="/register" exact >
-        <Register />
-      </Route>
-  </Switch>
-}
+const Header = lazy(() => import('./parts/Header'));
+const Content = lazy(() => import('./parts/Content'));
+const Login = lazy(() => import('./parts/Login'));
+const Register = lazy(() => import('./parts/Register'));
+
+const AuthenticatedRoute = ({children, ...rest}) => {
+  const authContext = useContext(AuthContext);
+  return (
+    <Route {...rest} render={() => (
+      authContext.isAuthenticated() ? 
+        <React.Fragment>
+          {children}
+        </React.Fragment> : <Redirect to="/login" />
+    )}/>
+  )
+};
+
+const AdminRoute = ({children, ...rest}) => {
+  const authContext = useContext(AuthContext);
+  return (
+    <Route {...rest} render={() => (
+      authContext.isAuthenticated() && authContext.isAdmin() ? 
+        <React.Fragment>
+          {children}
+        </React.Fragment> : <Redirect to="/login" />
+    )}/>
+  )
+};
 
 const AppRoutes = () => {
   return (
-    <Switch>
-      <Route path="/login" exact >
-          <Login />
-        </Route>
-        <Route path="/register" exact >
-          <Register />
-        </Route>
-        <Route path="/drive" >
-          <Header />
-          <Content />
+    <Suspense fallback={<div className="pageloader is-active is-white"><span className="title">Töltés...</span></div>}>
+      <Switch>
+      <AuthenticatedRoute path="/" exact>
+        <Redirect to="/drive/my-drive" />
+      </AuthenticatedRoute>
+      <Route path="/login" exact>
+        <Login />
       </Route>
+      <Route path="/register" exact>
+        <Register />
+      </Route>
+      <AuthenticatedRoute path="/drive">
+        <Header />
+        <Content />
+      </AuthenticatedRoute>
+      <AdminRoute path="/admin" exact>
+        <h1>Admin</h1>
+      </AdminRoute>
     </Switch>
+    </Suspense>
   );
 };
 
@@ -48,7 +71,9 @@ ReactDOM.render(
   <React.StrictMode>
     <Router>
       <AuthProvider>
-        <AppRoutes />  
+        <FetchProvider>
+          <AppRoutes /> 
+        </FetchProvider>
       </AuthProvider>    
     </Router>
   </React.StrictMode>,

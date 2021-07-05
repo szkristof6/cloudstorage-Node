@@ -1,6 +1,4 @@
-const {
-    Router
-} = require('express');
+const {Router} = require('express');
 const checkDiskSpace = require('check-disk-space').default
 
 const Files = require('./models/files');
@@ -12,8 +10,6 @@ const {
 const {
     fileUpload
 } = require('./functions/file');
-
-const { login, register } = require('./functions/userMethods');
 
 const router = Router();
 
@@ -38,8 +34,8 @@ const getURLsForPaths = async (path) => {
                 const name = i.pop();
 
                 const url = await Directories.find({
-                    'path': i,
-                    'name': name
+                    path: i,
+                    name
                 }, '_id name');
                 returnArray.push(url);
             }
@@ -54,9 +50,12 @@ const getURLsForPaths = async (path) => {
 router.get('/', async (req, res, next) => {
     try {
         const pageID = req.query.pageID === 'my-drive' ? 0 : req.query.pageID;
+        const { username } = req.user;
 
         const files = await Files.find({
-                'dir_id': pageID
+                dir_id: pageID,
+                user: username,
+                in_trash: false
             },
             '_id in_trash name meta user createdAt updatedAt',
             (error, _) => {
@@ -64,7 +63,9 @@ router.get('/', async (req, res, next) => {
             });
 
         const dirs = await Directories.find({
-                'dir_id': pageID
+                dir_id: pageID,
+                user: username,
+                in_trash: false
             },
             '_id in_trash name user createdAt updatedAt',
             (error, _) => {
@@ -72,7 +73,7 @@ router.get('/', async (req, res, next) => {
             });
 
         const dir = pageID !== 0 ? await Directories.find({
-                '_id': pageID
+                _id: pageID
             },
             'path name',
             (error, _) => {
@@ -82,19 +83,19 @@ router.get('/', async (req, res, next) => {
         const URLs = await getURLsForPaths(dir);
         
         const currentDirectory = pageID !== 0 ? [[{
-            '_id': dir[0]._id,
-            'name': dir[0].name
+            _id: dir[0]._id,
+            name: dir[0].name
         }]] : [];
 
         res.json({
-            'queryItems': {
-                files: files.filter(x => !x.in_trash),
-                dirs: dirs.filter(x => !x.in_trash)
+            queryItems: {
+                files,
+                dirs
             },
-            'queryData': [
+            queryData: [
                 [{
-                    '_id': 0,
-                    'name': 'Saját mappa'
+                    _id: 0,
+                    name: 'Saját mappa'
                 }],
                 ...URLs,
                 ...currentDirectory
@@ -117,9 +118,6 @@ router.get('/getStorage', async (req, res, next) => {
         next(error);
     }
 });
-
-router.post('/register', register);
-router.post('/login', login);
 
 router.post('/file_upload', fileUpload);
 router.post('/create_directory', createDirectory);

@@ -3,12 +3,16 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const session = require('express-session');
+const cookieParser = require('cookie-parser');
 
 require('dotenv').config();
 
 const middlewares = require('./middlewares');
 const router = require('./router');
+
+const { login, register } = require('./functions/userMethods');
+
+const { requireAuth, attachUser } = require('./middlewares');
 
 const app = express();
 
@@ -23,16 +27,6 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN,
 }));
 app.use(express.json());
-app.use(session({ 
-    secret: process.env.SESSION_SECRET,
-    cookie: { 
-        httpOnly: true,
-        maxAge: parseInt(process.env.SESSION_max_age)
-    }, 
-    resave: false,
-    saveUninitialized: true,
-    secure: true
-}));
 
 /*
 app.use((req, res, next) => {
@@ -40,6 +34,13 @@ app.use((req, res, next) => {
     next();
 })
 */
+
+app.post('/register', register);
+app.post('/login', login);
+
+app.use(cookieParser());
+app.use(attachUser);
+app.use(requireAuth)
 
 app.use('/api', router);
 
