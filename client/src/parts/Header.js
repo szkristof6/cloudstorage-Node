@@ -1,7 +1,12 @@
-//import { useState, useEffect } from 'react';
+import { useContext } from 'react';
 import Logo from '../static/Logo.png';
+import { AuthContext } from '../services/authContext';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
+  const auth = useContext(AuthContext);
+  const { authState } = auth;
+
   return (
     <div className="header">
       <div className="logo" title={`Martin Cloud`}>
@@ -10,13 +15,16 @@ const Header = () => {
         </figure>
         <div className="s-name">Martin Cloud</div>
       </div>
-      <div className="kereses"></div>
+      <div className="kereses">
+      </div>
       <div className="fiok">
         <div className="logout" title={`Kilépés`}>
-          <a href="/logout"><i className="fas fa-sign-out-alt"></i></a>
+          <Link to={'#'} onClick={auth.logout}><i className="fas fa-sign-out-alt"></i></Link>
         </div>
         <div className="profile">
-          <div className="p-icon" title={`K`}>K</div>
+          {
+            authState.userInfo.username && <div className="p-icon" title={`Felhasználó név: ${authState.userInfo.username}`}>{authState.userInfo.username[0].toUpperCase()}</div> 
+          }
         </div>
       </div>
     </div>

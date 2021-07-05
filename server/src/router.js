@@ -13,6 +13,8 @@ const {
     fileUpload
 } = require('./functions/file');
 
+const { login, register } = require('./functions/userMethods');
+
 const router = Router();
 
 const getURLsForPaths = async (path) => {
@@ -114,7 +116,10 @@ router.get('/getStorage', async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-})
+});
+
+router.post('/register', register);
+router.post('/login', login);
 
 router.post('/file_upload', fileUpload);
 router.post('/create_directory', createDirectory);

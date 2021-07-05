@@ -6,7 +6,7 @@ import InfoPanel from './panels/InfoPanel';
 import Grid from './panels/Grid';
 import Table from './panels/Table';
 
-import { listAll } from '../API';
+import { APIFetch } from '../services/Public';
 
 const Area = () => {
     const [ loading, setLoading ] = useState(true);
@@ -68,9 +68,13 @@ const Area = () => {
     const getData = async () => {
         setLoading(true);
 
-        const query = await listAll(pageID);
+        const { data } = await APIFetch.get('/', {
+            params: {
+                pageID    
+            }
+        });
 
-        const {queryData, queryItems} = query;
+        const {queryData, queryItems} = data;
 
         setPageData(queryData);
         setFolders(queryItems.dirs);

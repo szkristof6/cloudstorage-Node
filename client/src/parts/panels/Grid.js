@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 
 import Selectable from 'selectable.js';
 
-const Grid = ({pageID, setPageID, files,loading, setSelected, folders, changeSort, settings}) => {
+const Grid = ({pageID, setPageID, files, loading, setSelected, folders, changeSort, settings}) => {
     const history = useHistory();
 
     const setSelectable = () => {
