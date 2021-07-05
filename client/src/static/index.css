@@ -797,13 +797,12 @@ a.button {
 }
 
 .ui-selecting a.button,
-.ui-selecting a.row,
+a.row.ui-selecting,
 .ui-selected a.button,
-.ui-selected a.row {
+a.row.ui-selected  {
     opacity: 1;
     color: var(--red);
     background-color: var(--light);
-    border-color: var(--red);
     box-shadow: 0 0 0 .125em var(--active) !important;
 }
 
@@ -860,7 +859,6 @@ a.row {
     border-bottom: 1px solid #dadce0;
     font-size: 16px;
     color: #5f6368;
-    z-index: 10;
     position: relative;
 }
 

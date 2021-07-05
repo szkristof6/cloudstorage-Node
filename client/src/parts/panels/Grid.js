@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import Skeleton from 'react-loading-skeleton';
+import { useEffect } from 'react';
 
 import Selectable from 'selectable.js';
 
-const Dragarea = ({pageID, setPageID, loading, setSelected, changeSort, settings, folders, files}) => {
+const Grid = ({pageID, setPageID, files,loading, setSelected, folders, changeSort, settings}) => {
+    const history = useHistory();
 
     const setSelectable = () => {
         const selectionArea = document.querySelector("#dragarea");
-        const selectableItems = selectionArea.querySelectorAll(".grid-item");
+        const selectableItems = selectionArea.querySelectorAll(".grid-item")
 
         const selectable = new Selectable({
                 filter: selectableItems,
@@ -36,22 +36,6 @@ const Dragarea = ({pageID, setPageID, loading, setSelected, changeSort, settings
             setSelected([]);
         });
 
-        /*
-        const a = [
-            {
-                id: '45834hf34r3dxxcs48',
-                type: 'file'
-            }
-        ]
-
-        const b = [
-            {
-                id: '45834hf34r3dxxcs48',
-                name: 'hello'
-            }
-        ]
-        */
-
         selectable.on("end", (_, selection) => {
             const newSelected = [];
             selection.forEach(select => {
@@ -72,8 +56,6 @@ const Dragarea = ({pageID, setPageID, loading, setSelected, changeSort, settings
     };
 
     useEffect(() => !loading && setSelectable(), [loading, pageID]);
-
-    const history = useHistory();
 
     return (
         <div className="dragarea" id="dragarea">
@@ -123,6 +105,6 @@ const Dragarea = ({pageID, setPageID, loading, setSelected, changeSort, settings
             </div>
         </div>
     );
-}
+};
 
-export default Dragarea;
+export default Grid;

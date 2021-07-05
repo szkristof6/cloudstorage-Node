@@ -1,16 +1,7 @@
 import { useState, useEffect } from 'react';
+
 import { getStorage } from '../API';
-
-const humanReadableByte = (fileSizeInBytes) => {
-  let i = -1;
-  const byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
-  do {
-      fileSizeInBytes = fileSizeInBytes / 1024;
-      i++;
-  } while (fileSizeInBytes > 1024);
-
-  return Math.max(fileSizeInBytes, 0.1).toFixed(0) + byteUnits[i];
-};
+import { humanReadableByte } from '../global';
 
 const Navigation = () => {
   const [ storage, setStorage ] = useState([]);

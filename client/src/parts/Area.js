@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 
-import Dragarea from './panels/Dragarea';
 import InfoPanel from './panels/InfoPanel';
+import Grid from './panels/Grid';
+import Table from './panels/Table';
 
 import { listAll } from '../API';
 
@@ -22,6 +23,7 @@ const Area = () => {
         sortDesc: true,
         sortType: 'name',
         InfoPanelOn: false,
+        showGrid: true
     });
 
     const sortByName = (x, y) => {
@@ -52,7 +54,14 @@ const Area = () => {
             ...settings,
             InfoPanelOn: !settings.InfoPanelOn
         });
-    }
+    };
+
+    const changeViewMode = () => {
+        setSettings({
+            ...settings,
+            showGrid: !settings.showGrid
+        });
+    };
 
     useEffect(() => getData(), [pageID]);
 
@@ -114,8 +123,10 @@ const Area = () => {
                             </>
                         }
 
-                        <div className="i-icon">
-                            <i className="fas fa-bars" title={`Listanézet`} aria-hidden="true"></i>
+                        <div className="i-icon" onClick={changeViewMode}>
+                            {
+                                settings.showGrid ? <i className="fas fa-bars" title={`Listanézet`} aria-hidden="true"></i> : <i className="fas fa-table" title={`Rácsnézet`} aria-hidden="true"></i>
+                            }
                         </div>
                         <div className={`i-icon ${settings.InfoPanelOn && 'active'}`} onClick={openInfo}>
                             <i className="fas fa-info-circle" title={`Részletek megjelenítése`} aria-hidden="true"></i>
@@ -123,7 +134,11 @@ const Area = () => {
                     </div>
                 </div>
                 <div className="file-panel">
-                    <Dragarea pageID={pageID} setPageID={setPageID} loading={loading} setSelected={setSelected} changeSort={changeSort} settings={settings} folders={folders} files={files} />
+                {
+                    settings.showGrid ? 
+                        <Grid pageID={pageID} loading={loading} setSelected={setSelected} setPageID={setPageID} settings={settings} changeSort={changeSort} folders={folders} files={files} />
+                        : <Table pageID={pageID} loading={loading} setSelected={setSelected} setPageID={setPageID} settings={settings} changeSort={changeSort} folders={folders} files={files} />
+                }
                     <InfoPanel selected={selected} folders={folders} files={files} settings={settings} selected={selected} pageData={pageData} closeInfo={openInfo} />
                 </div>
 

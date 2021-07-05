@@ -17,7 +17,7 @@ Project Description
 - [ ] Drag 'n Drop  
 - [x] Info panel  
 - [ ] Sort by type  
-- [ ] List view  
+- [x] List view  
 - [x] onDoubleClick Event  
 - [ ] Dropdown menus  
 - [ ] Authorization  
