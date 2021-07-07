@@ -50,11 +50,12 @@ const types = [{
 ];
 
 const iconByFormat = (item) => {
-    const foundIcon = types.filter(x => x.type.includes(item.meta.type)).pop();
+    const type = item.meta.type.split('/');
+    const foundIcon = types.filter(x => x.type.some(r => type.includes(r))).pop();
 
     return {
-        icon: foundIcon.icon,
-        name: foundIcon.name
+        icon: foundIcon ? foundIcon.icon : 'far fa-question-circle',
+        name: foundIcon ? foundIcon.name : 'Ismeretlen fájl'
     }
 
 };

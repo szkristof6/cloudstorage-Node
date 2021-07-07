@@ -11,6 +11,7 @@ import {
   AuthContext
 } from './services/authContext';
 import { FetchProvider } from './services/FetchContext';
+import { FileProvider } from './services/FileContext';
 
 const Header = lazy(() => import('./parts/Header'));
 const Content = lazy(() => import('./parts/Content'));
@@ -66,13 +67,14 @@ const AppRoutes = () => {
   );
 };
 
-
 ReactDOM.render(
   <React.StrictMode>
     <Router>
       <AuthProvider>
         <FetchProvider>
-          <AppRoutes /> 
+          <FileProvider>
+            <AppRoutes />
+          </FileProvider>
         </FetchProvider>
       </AuthProvider>    
     </Router>

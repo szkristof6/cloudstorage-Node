@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { AuthContext } from '../services/authContext';
 import { FetchContext } from '../services/FetchContext';
 
-import { APIFetch } from '../services/API';
 import { humanReadableByte } from '../global';
+import Create from './dropdown/Create';
 
 const navItems = [
   {
@@ -31,6 +31,7 @@ const navItems = [
 
 const Navigation = () => {
   const [ storage, setStorage ] = useState([]);
+  const [ dropdownActive, setdropdownActive ] = useState(false);
 
   const auth = useContext(AuthContext);
   const fetchContext = useContext(FetchContext);
@@ -45,11 +46,12 @@ const Navigation = () => {
 
   return (
     <div className="navbar">
-      <div className="dropdown" id="new">
+      <div className={`dropdown ${dropdownActive ? 'is-active' : ''}`} id="new">
         <div className="dropdown-trigger">
-          <button className="button is-medium is-rounded new" aria-haspopup="true" aria-controls="dropdown-menu">
+          <button className="button is-medium is-rounded new" aria-haspopup="true" aria-controls="dropdown-menu" onClick={() => setdropdownActive(!dropdownActive)}>
               <i className="fas fa-plus"></i><span>Új</span></button>
         </div>
+        <Create id='new' />
       </div>
       <ul className="n-ul">
         {

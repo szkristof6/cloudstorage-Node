@@ -3,42 +3,40 @@ const Directories = require('../models/directories');
 
 const iconByFormat = require('../formats');
 
-const findUpperDir = async (req) => {
-    const path = [...req.body.path];
+const findUpperDir = async (filePath) => {
+    const path = [...filePath];
     const folder = path.pop();
 
     //console.log(`path: ${path}, folder: ${folder}`);
 
-    const query = await Directories.find({
-        'path': path,
-        'name': folder,
-    }, '_id', (_, dir) => {
-        return dir._id;
-    });
+    const query = await Directories.findOne({
+            path,
+            name: folder
+        })
+        .lean()
+        .select('_id');
 
-    return query[0] !== undefined ? query[0]._id : 0;
+    return query ? query._id : 0;
 }
 
-const fileUpload = async (req, res, next) => {
+const fileUpload = async (file) => {
     try {
+        const dir_id = await findUpperDir(file.path);
+        const icon = iconByFormat(file);
 
-        const dir_id = await findUpperDir(req);
-        const icon = iconByFormat(req.body);
-
-        req.body.meta = {...req.body.meta, ...icon};
+        file.meta = {...file.meta, ...icon};
 
         const fileEntry = new Files({
-            ...req.body,
+            ...file,
             dir_id,
         });
 
         const createdEntry = await fileEntry.save();
-        res.json(createdEntry)
+        console.log(file);
+
+        return(createdEntry);
     } catch (error) {
-        if (error.name === 'ValidationError') {
-            res.status(422);
-        }
-        next(error);
+        throw new Error(error);
     }
 };
 

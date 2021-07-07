@@ -8,19 +8,12 @@ import Table from './panels/Table';
 import Message from './form/Message';
 
 import { APIFetch } from '../services/API';
-import { AuthContext } from '../services/authContext';
 import { FetchContext } from '../services/FetchContext';
+import { FileContext } from '../services/FileContext';
 
 const Area = () => {
     const [ loading, setLoading ] = useState(true);
     const [ selected, setSelected ] = useState([]);
-
-    const location = useLocation().pathname.split('/');
-    const [pageID, setPageID] = useState(location.pop());
-
-    const [ pageData, setPageData ] = useState([]);
-    const [ folders, setFolders ] = useState([]);
-    const [ files, setFiles ] = useState([]);
 
     const [ settings, setSettings ] = useState({
         sortDesc: true,
@@ -29,9 +22,18 @@ const Area = () => {
         showGrid: true
     });
 
-    const authContext = useContext(AuthContext);
     const fetchContext = useContext(FetchContext);
-    const { authState } = authContext;
+    const fileContext = useContext(FileContext);
+    const {
+        getData,
+        folders,
+        setFolders,
+        files,
+        setFiles,
+        pageID,
+        setPageID,
+        pageData
+    } = fileContext;
 
     const sortByName = (x, y) => {
         let a = x.name.toUpperCase(),
@@ -70,26 +72,16 @@ const Area = () => {
         });
     };
 
-    useEffect(() => getData(), [pageID]);
+    useEffect(() => handleLoading(), [pageID]);
 
     const [requestError, setRequestError] = useState();
 
-    const getData = useCallback(async () => {
+    const handleLoading = useCallback(async () => {
         try {
             setLoading(true);
-            const { data } = await fetchContext.authAxios.get('/', {
-                params: {
-                    pageID    
-                }
-            });
+            await getData();
 
             setRequestError('')
-
-            const {queryData, queryItems} = data;
-
-            setPageData(queryData);
-            setFolders(queryItems.dirs);
-            setFiles(queryItems.files);
 
             setLoading(false);
         } catch (error) {

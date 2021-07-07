@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import { useHistory } from "react-router-dom";
+import Cookies from 'js-cookie';
 
 const AuthContext = createContext();
 const { Provider } = AuthContext;
@@ -7,7 +8,7 @@ const { Provider } = AuthContext;
 const AuthProvider = ({children}) => {
 		const history = useHistory();
 
-    const expiresAt = localStorage.getItem('expiresAt');
+    const expiresAt = Cookies.get('expiresAt');
     const userInfo = localStorage.getItem('userInfo');
 
     const [authState, setAuthState] = useState({
@@ -17,7 +18,6 @@ const AuthProvider = ({children}) => {
     });
 
     const setAuthInfo = ({token, userInfo, expiresAt}) => {
-        localStorage.setItem('expiresAt', expiresAt);
         localStorage.setItem('userInfo', JSON.stringify(userInfo));
         setAuthState({
             token,
@@ -27,7 +27,6 @@ const AuthProvider = ({children}) => {
     };
 
 		const logout = () => {
-			localStorage.removeItem('expiresAt');
 			localStorage.removeItem('userInfo');
 
 			setAuthState({

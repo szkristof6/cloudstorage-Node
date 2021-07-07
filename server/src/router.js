@@ -1,21 +1,19 @@
 const {Router} = require('express');
 const checkDiskSpace = require('check-disk-space').default
+const multer = require('multer');
+const path = require('path');
 
 const Files = require('./models/files');
 const Directories = require('./models/directories');
 
-const {
-    createDirectory
-} = require('./functions/directory');
-const {
-    fileUpload
-} = require('./functions/file');
+const { upload } = require('./functions/upload');
 
 const router = Router();
+const uploadPath = path.resolve("../data");
 
 const getURLsForPaths = async (path) => {
     if (path.length > 0) {
-        const paths = [...path[0].path];
+        const paths = [...path.path];
         const temp = [];
 
         paths.forEach((_, index) => {
@@ -56,35 +54,30 @@ router.get('/', async (req, res, next) => {
                 dir_id: pageID,
                 user: username,
                 in_trash: false
-            },
-            '_id in_trash name meta user createdAt updatedAt',
-            (error, _) => {
-                if (error) next(error)
-            });
+            })
+            .lean()
+            .select('_id in_trash name meta user createdAt updatedAt');
 
         const dirs = await Directories.find({
                 dir_id: pageID,
                 user: username,
                 in_trash: false
-            },
-            '_id in_trash name user createdAt updatedAt',
-            (error, _) => {
-                if (error) next(error)
-            });
+            })
+            .lean()
+            .select('_id in_trash name user createdAt updatedAt');
 
-        const dir = pageID !== 0 ? await Directories.find({
+        const dir = pageID !== 0 ? await Directories.findOne({
                 _id: pageID
-            },
-            'path name',
-            (error, _) => {
-                if (error) next(error)
-            }) : [];
+            })
+            .lean()
+            .select('path name') : [];
+        
 
         const URLs = await getURLsForPaths(dir);
         
         const currentDirectory = pageID !== 0 ? [[{
-            _id: dir[0]._id,
-            name: dir[0].name
+            _id: dir._id,
+            name: dir.name
         }]] : [];
 
         res.json({
@@ -107,9 +100,8 @@ router.get('/', async (req, res, next) => {
 });
 
 router.get('/getStorage', async (req, res, next) => {
-    const path = 'C:/Users/SzKt/OneDrive/Dokumentumok/Projects/Node.JS/cloudstorage/data';
     try {
-        const diskContent = await checkDiskSpace(path);
+        const diskContent = await checkDiskSpace(uploadPath);
         res.json({
             size: diskContent.size,
             remaining: diskContent.size - diskContent.free,
@@ -119,7 +111,18 @@ router.get('/getStorage', async (req, res, next) => {
     }
 });
 
-router.post('/file_upload', fileUpload);
-router.post('/create_directory', createDirectory);
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, uploadPath);
+    },
+
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + path.extname(file.originalname));
+    }
+});
+
+const uploadHandler = multer({ storage: storage });
+
+router.post('/upload', uploadHandler.array("files"), upload)
 
 module.exports = router;

@@ -7,7 +7,7 @@ Project Description
 - [ ] Design refresh  
 - [ ] Skeleton.js  
 - [ ] filePreviews when possible  
-- [ ] Sessions  
+- [x] Sessions  
 - [ ] contentMenu  
 - [ ] Share  
 - [ ] Shared  
@@ -20,7 +20,7 @@ Project Description
 - [x] List view  
 - [x] onDoubleClick Event  
 - [ ] Dropdown menus  
-- [ ] Authorization  
+- [x] Authorization  
 - [ ] Trash  
 
 ### In Progress

@@ -44,7 +44,12 @@ const login = async (req, res, next) => {
             const expiresAt = decodedToken.exp;
 
             res.cookie('token', token, {
-                httpOnly: true
+                httpOnly: true,
+                secure: true
+            });
+
+            res.cookie('expiresAt', expiresAt, {
+                secure: true
             });
 
             return res.json({

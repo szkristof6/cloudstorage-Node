@@ -10,9 +10,15 @@ require('dotenv').config();
 const middlewares = require('./middlewares');
 const router = require('./router');
 
-const { login, register } = require('./functions/userMethods');
+const {
+    login,
+    register
+} = require('./functions/userMethods');
 
-const { requireAuth, attachUser } = require('./middlewares');
+const {
+    requireAuth,
+    attachUser
+} = require('./middlewares');
 
 const app = express();
 
@@ -28,19 +34,12 @@ app.use(cors({
 }));
 app.use(express.json());
 
-/*
-app.use((req, res, next) => {
-    console.log(req.session);
-    next();
-})
-*/
-
 app.post('/register', register);
 app.post('/login', login);
 
 app.use(cookieParser());
 app.use(attachUser);
-app.use(requireAuth)
+app.use(requireAuth);
 
 app.use('/api', router);
 
