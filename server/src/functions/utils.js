@@ -1,6 +1,7 @@
 const Yup = require('yup');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const Directories = require('../models/directories');
 
 const RegisterSchema = Yup.object().shape({
     email: Yup.string().email().required('Add meg az email címedet'),
@@ -41,19 +42,53 @@ const hashPassword = async (password) => {
     } catch (error) {
         throw new Error(error);
     };
-  };
-  
-  const verifyPassword = (
+};
+
+const verifyPassword = (
     passwordAttempt,
     hashedPassword
-  ) => {
+) => {
     return bcrypt.compare(passwordAttempt, hashedPassword);
-  };
+};
+
+const getPaths = (paths) => {
+    if (paths.length > 0) {
+        const temp = new Array();
+
+        paths.forEach((_, index) => {
+            const a = [];
+            for (let i = 0; i < index + 1; i++) {
+                a.push(paths[i]);
+            }
+            temp.push(a)
+        });
+
+        return temp;
+    }
+    return [];
+};
+
+const getContainingDirectory = async (id) => {
+    const { path, name } = await Directories.findOne({
+        _id: id
+    })
+    .lean()
+    .select('path name');
+
+    path.shift();
+
+    return ([
+        ...path,
+        name
+    ].join('/'));
+};
 
 module.exports = {
     RegisterSchema,
     LoginSchema,
     createToken,
     hashPassword,
-    verifyPassword
+    verifyPassword,
+    getPaths,
+    getContainingDirectory
 }

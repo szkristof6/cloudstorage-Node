@@ -19,17 +19,20 @@ const FileProvider = ({children}) => {
     const fileUpload = async (files) => {
         const API_URL = '/api';
 
+        console.log(files)
+
+
         const formData = new FormData();
+
         for(const i of files) formData.append('files', i);
 
         try {
-            const { data } = await axios.post(`${API_URL}/upload?pageID=${pageID}`, formData, {
+            const { data } = await axios.post(`${API_URL}/upload?PGID=${pageID}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
             await getData();
-
 
             return data;
         } catch (error) {
@@ -41,7 +44,7 @@ const FileProvider = ({children}) => {
         try {
             const { data } = await authAxios.get('/', {
                 params: {
-                    pageID    
+                    PGID: pageID 
                 }
             });
 

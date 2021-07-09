@@ -8,7 +8,7 @@ const { Provider } = AuthContext;
 const AuthProvider = ({children}) => {
 		const history = useHistory();
 
-    const expiresAt = Cookies.get('expiresAt');
+    const expiresAt = Cookies.get('EXPAT');
     const userInfo = localStorage.getItem('userInfo');
 
     const [authState, setAuthState] = useState({

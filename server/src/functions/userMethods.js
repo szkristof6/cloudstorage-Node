@@ -43,12 +43,12 @@ const login = async (req, res, next) => {
             const decodedToken = jwtDecode(token);
             const expiresAt = decodedToken.exp;
 
-            res.cookie('token', token, {
+            res.cookie('TKN', token, {
                 httpOnly: true,
                 secure: true
             });
 
-            res.cookie('expiresAt', expiresAt, {
+            res.cookie('EXPAT', expiresAt, {
                 secure: true
             });
 
@@ -122,8 +122,12 @@ const register = async (req, res, next) => {
             const decodedToken = jwtDecode(token);
             const expiresAt = decodedToken.exp; 
 
-            res.cookie('token', token, {
+            res.cookie('TKN', token, {
                 httpOnly: true
+            });
+
+            res.cookie('EXPAT', expiresAt, {
+                secure: true
             });
 
             return res.json({

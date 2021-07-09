@@ -11,7 +11,7 @@ const InfoPanel = ({settings, closeInfo, selected, pageData, files, folders}) =>
         selected[0].type === 'file' ? 
           files.filter(x => x._id === selected[0].id)[0] 
           : folders.filter(x => x._id === selected[0].id)[0]
-      : pageData[pageData.length - 1][0];
+      : pageData[pageData.length - 1];
 
       setInfoItem(item)
     }
@@ -46,7 +46,7 @@ const InfoPanel = ({settings, closeInfo, selected, pageData, files, folders}) =>
               </div>
               <div className="i-elem">
                 <div className="ie-nev">Hely:</div>
-                <div className="ie-ertek">{pageData[pageData.length - 1][0].name}</div>
+                <div className="ie-ertek">{pageData[pageData.length - 1].name}</div>
               </div>
               <div className="i-elem">
                 <div className="ie-nev">Tulajdonos:</div>

@@ -24,11 +24,11 @@ const requireAuth = jwt({
     audience: 'api.cloud.szkt',
     issuer: 'api.cloud.szkt',
     algorithms: ['HS256'],
-    getToken: req => req.cookies.token
+    getToken: req => req.cookies.TKN
 });
 
 const attachUser = (req, res, next) => {
-    const token = req.cookies.token;
+    const token = req.cookies.TKN;
     if(!token) return res.status(401).json({ message: 'Hibás token' });
 
     const decodedToken = jwtDecode(token);

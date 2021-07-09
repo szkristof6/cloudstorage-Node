@@ -1,54 +1,64 @@
 const Directories = require('../models/directories');
-
+const path = require('path');
 const { createDirectory } = require('./directory');
 const { fileUpload } = require('./file');
+const { getContainingDirectory } = require('./utils');
+
+/*
+{
+    "name": "Index.txt",
+    "path": ["index"],
+    "in_trash": false,
+    "meta": {
+        "size": 3223123,
+        "type": "text",
+        "lastModified": "2021-04-13T13:32:49.142Z"
+    },
+    "share": {
+        "mode": "none",
+        "permissions": "read"
+    },
+    "user": "admin"
+}
+*/
+
 
 const upload = async (req, res, next) => {
-    try {
-        const { files, user } = req;
-        const pageID = req.query.pageID === 'my-drive' ? 0 : req.query.pageID;
+    const {files , user} = req;
+    const pageID = req.query.PGID;
 
-        const query = pageID !== 0 &&
-            await Directories.findOne({
-                _id: pageID
-            })
-            .lean()
-            .select('path name');
+    console.log(files);
 
-        if(pageID !== 0) {
-            const { path, name } = query;
-            path.push(name);
-        }
-        
-        for(let file of files){
-            const json = {
-                name: file.originalname,
-                path: pageID !== 0 ? query.path : ["index"],
-                in_trash: false,
-                meta: {
-                    size: file.size,
-                    type: file.mimetype,
-                    lastModified: Date.now()
-                },
-                share: {
-                    mode: 'none',
-                    permissions: 'read'
-                },
-                user: user.username
-            };
+    for(const file of files){
+        const originalname = file.originalname.split('/');
+        const name = originalname.pop();
+        const containingDirectory = await getContainingDirectory(pageID);
 
-            await fileUpload(json);
+        const fileJson = {
+            name,
+            path: [
+                'index',
+                ...pageID !== 'my-drive' ? containingDirectory.split('/') : [],
+                ...originalname
+            ],
+            in_trash: false,
+            meta: {
+                size: file.size,
+                type: file.mimetype,
+                lastModified: Date.now()
+            },
+            share: {
+                mode: 'none',
+                permissions: 'read'
+            },
+            user: user.username
         };
-        res.json({
-            message: 'Sikeres feltöltés',
-            code: 200
-        });   
-    } catch (error) {
-        if (error.name === 'ValidationError') {
-            res.status(422);
-        }
-        next(error);
+    
+        const fileResult = await fileUpload(fileJson);
+        console.log(fileResult);
     }
+    res.json({files: files})
+    
 };
 
 module.exports = { upload }

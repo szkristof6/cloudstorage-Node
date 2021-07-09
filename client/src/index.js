@@ -12,6 +12,7 @@ import {
 } from './services/authContext';
 import { FetchProvider } from './services/FetchContext';
 import { FileProvider } from './services/FileContext';
+import Loader from './parts/Loader';
 
 const Header = lazy(() => import('./parts/Header'));
 const Content = lazy(() => import('./parts/Content'));
@@ -44,7 +45,7 @@ const AdminRoute = ({children, ...rest}) => {
 
 const AppRoutes = () => {
   return (
-    <Suspense fallback={<div className="pageloader is-active is-white"><span className="title">Töltés...</span></div>}>
+    <Suspense fallback={<Loader active={true} color='is-white' label='Töltés...' />}>
       <Switch>
       <AuthenticatedRoute path="/" exact>
         <Redirect to="/drive/my-drive" />

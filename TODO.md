@@ -21,7 +21,9 @@ Project Description
 - [x] onDoubleClick Event  
 - [ ] Dropdown menus  
 - [x] Authorization  
-- [ ] Trash  
+- [ ] Trash 
+
+- [ ] Folder create in database on upload
 
 ### In Progress
 

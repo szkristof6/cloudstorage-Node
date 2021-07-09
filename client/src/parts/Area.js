@@ -6,8 +6,8 @@ import InfoPanel from './panels/InfoPanel';
 import Grid from './panels/Grid';
 import Table from './panels/Table';
 import Message from './form/Message';
+import Loader from './Loader';
 
-import { APIFetch } from '../services/API';
 import { FetchContext } from '../services/FetchContext';
 import { FileContext } from '../services/FileContext';
 
@@ -93,7 +93,7 @@ const Area = () => {
     return (
         <div className="area">
             {
-                loading ? <div className="loader toltes"></div> : 
+                loading ? <Loader active={true} color='is-white' label='Töltés...' /> : 
                 requestError ? <Message state="is-danger" text={requestError} /> :
                     <form className="a-form" method="post" encType="multipart/form-data" style={{display: 'block'}}>
                     <div className="file-area">
@@ -103,9 +103,9 @@ const Area = () => {
                                 {
                                     pageData.length > 0 &&
                                     pageData.map((url) => (
-                                        <li key={url[0]._id}>
+                                        <li key={url._id}>
                                             {
-                                                pageID === 'my-drive' ? <a>{url[0].name}</a> : url[0]._id === 0 ? <Link onClick={() => setPageID('my-drive')} to={`/drive/my-drive`}>{url[0].name}</Link> : <Link onClick={() => setPageID(url[0]._id)} to={`/drive/folder/${url[0]._id}`}>{url[0].name}</Link>
+                                                pageID === 'my-drive' ? <a>{url.name}</a> : url._id === 0 ? <Link onClick={() => setPageID('my-drive')} to={`/drive/my-drive`}>{url.name}</Link> : <Link onClick={() => setPageID(url._id)} to={`/drive/folder/${url._id}`}>{url.name}</Link>
                                             }
                                         </li>
                                     ))
