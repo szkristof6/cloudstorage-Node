@@ -1,8 +1,6 @@
-const Directories = require('../models/directories');
-const path = require('path');
 const { createDirectory } = require('./directory');
 const { fileUpload } = require('./file');
-const { getContainingDirectory } = require('./utils');
+const { getContainingDirectory, getAllPath } = require('./utils');
 
 /*
 {
@@ -22,43 +20,64 @@ const { getContainingDirectory } = require('./utils');
 }
 */
 
-
 const upload = async (req, res, next) => {
-    const {files , user} = req;
-    const pageID = req.query.PGID;
+  const { files, user } = req;
+  const pageID = req.query.PGID;
 
-    console.log(files);
+  // console.log(files.map((file) => file.originalname));
 
-    for(const file of files){
-        const originalname = file.originalname.split('/');
-        const name = originalname.pop();
-        const containingDirectory = await getContainingDirectory(pageID);
+  const paths = getAllPath(
+    files
+      .map((file) => {
+        const combinedFilename = file.originalname.split('/');
+        if (combinedFilename.length === 1) return null;
+        return combinedFilename
+          .splice(0, combinedFilename.length - 1)
+          .join('/');
+      })
+      .filter((v, i, a) => a.indexOf(v) === i)
+      .map((file) => {
+        if (file === null) return null;
+        return file.split('/');
+      }),
+  );
 
-        const fileJson = {
-            name,
-            path: [
-                'index',
-                ...pageID !== 'my-drive' ? containingDirectory.split('/') : [],
-                ...originalname
-            ],
-            in_trash: false,
-            meta: {
-                size: file.size,
-                type: file.mimetype,
-                lastModified: Date.now()
-            },
-            share: {
-                mode: 'none',
-                permissions: 'read'
-            },
-            user: user.username
-        };
-    
-        const fileResult = await fileUpload(fileJson);
-        console.log(fileResult);
-    }
-    res.json({files: files})
-    
+  // console.log(paths, '_allpaths');
+
+  const containingDirectory = pageID !== 'my-drive' && (await getContainingDirectory(pageID));
+
+  const folderResult = paths && (await createDirectory(paths, user.username, containingDirectory));
+
+  const fileResult = await Promise.all(
+    files.map(async (file) => {
+      const originalname = file.originalname.split('/');
+      const name = originalname.pop();
+
+      const fileJson = {
+        name,
+        path: [
+          'index',
+          ...(pageID !== 'my-drive' ? containingDirectory.split('/') : []),
+          ...originalname,
+        ],
+        in_trash: false,
+        meta: {
+          size: file.size,
+          type: file.mimetype,
+          lastModified: Date.now(),
+        },
+        share: {
+          mode: 'none',
+          permissions: 'read',
+        },
+        user: user.username,
+      };
+
+      const result = await fileUpload(fileJson);
+      return result;
+    }),
+  );
+  res.json({ files, folderResult, fileResult });
 };
 
-module.exports = { upload }
+module.exports = { upload };

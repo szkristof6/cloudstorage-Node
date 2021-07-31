@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-const {
-    Schema
-} = mongoose;
+
+const { Schema } = mongoose;
 
 /*
  * name - Text
@@ -14,37 +13,39 @@ const {
  */
 
 const requiredString = {
-    type: String,
-    required: true,
-}
+  type: String,
+  required: true,
+};
 
-const DirectoriesSchema = new Schema({
+const DirectoriesSchema = new Schema(
+  {
     dir_id: requiredString,
     name: requiredString,
     path: {
-        type: Array,
-        required: true,
+      type: Array,
+      required: true,
     },
     in_trash: {
-        type: Boolean,
-        default: false,
-        required: true,
+      type: Boolean,
+      default: false,
+      required: true,
     },
     share: {
-        mode: {
-            ...requiredString,
-            default: 'none'
-        },
-        permissions: {
-            ...requiredString,
-            default: 'read',
-        },
+      mode: {
+        ...requiredString,
+        default: 'none',
+      },
+      permissions: {
+        ...requiredString,
+        default: 'read',
+      },
     },
     user: requiredString,
-
-}, {
+  },
+  {
     timestamps: true,
-});
+  },
+);
 
 const Directories = mongoose.model('Directories', DirectoriesSchema);
 

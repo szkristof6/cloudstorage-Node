@@ -1,6 +1,5 @@
-
-import Navigation from './Navigation';
-import Area from './Area';
+import Navigation from "./Navigation";
+import Area from "./Area";
 
 const Content = () => {
   return (
@@ -9,6 +8,6 @@ const Content = () => {
       <Area />
     </div>
   );
-}
+};
 
 export default Content;

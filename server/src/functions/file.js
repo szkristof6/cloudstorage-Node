@@ -3,43 +3,54 @@ const Directories = require('../models/directories');
 
 const iconByFormat = require('../formats');
 
-const findUpperDir = async (filePath) => {
-    const path = [...filePath];
-    const folder = path.pop();
+const findUpperDir = async (path) => {
+  if (path === 'index') return 0;
+  const folder = path.pop();
 
-    //console.log(`path: ${path}, folder: ${folder}`);
+  //console.log(`path: ${path}, folder: ${folder}`);
 
-    const query = await Directories.findOne({
-            path,
-            name: folder
-        })
-        .lean()
-        .select('_id');
+  const query = await Directories.findOne({
+    path,
+    name: folder,
+  })
+    .lean()
+    .select('_id');
 
-    return query ? query._id : 0;
-}
+  return query ? query._id : 0;
+};
 
 const fileUpload = async (file) => {
-    try {
-        const dir_id = await findUpperDir(file.path);
-        const icon = iconByFormat(file);
+  try {
+    //console.log(file.path);
 
-        file.meta = {...file.meta, ...icon};
+    const query = await Files.findOne({
+      name: file.name,
+      path: file.path,
+    }).lean();
 
-        const fileEntry = new Files({
-            ...file,
-            dir_id,
-        });
+    if (query) return false;
 
-        const createdEntry = await fileEntry.save();
-        console.log(file);
+    const dir_id = await findUpperDir(file.path);
+    const icon = iconByFormat(file);
 
-        return(createdEntry);
-    } catch (error) {
-        throw new Error(error);
-    }
+    //console.log(dir_id, 'dir_id');
+
+    file.meta = { ...file.meta, ...icon };
+
+    const fileEntry = new Files({
+      ...file,
+      dir_id,
+    });
+
+    const createdEntry = await fileEntry.save();
+    //console.log(file);
+
+    return createdEntry;
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
 module.exports = {
-    fileUpload,
-}
+  fileUpload,
+};

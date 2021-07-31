@@ -1,69 +1,66 @@
 import { createContext, useState } from "react";
 import { useHistory } from "react-router-dom";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 const { Provider } = AuthContext;
 
-const AuthProvider = ({children}) => {
-		const history = useHistory();
+const AuthProvider = ({ children }) => {
+  const history = useHistory();
 
-    const expiresAt = Cookies.get('EXPAT');
-    const userInfo = localStorage.getItem('userInfo');
+  const expiresAt = Cookies.get("EXPAT");
+  const userInfo = localStorage.getItem("userInfo");
 
-    const [authState, setAuthState] = useState({
-        token: null,
-        expiresAt,
-        userInfo: userInfo ? JSON.parse(userInfo) : {}
+  const [authState, setAuthState] = useState({
+    token: null,
+    expiresAt,
+    userInfo: userInfo ? JSON.parse(userInfo) : {},
+  });
+
+  const setAuthInfo = ({ token, userInfo, expiresAt }) => {
+    localStorage.setItem("userInfo", JSON.stringify(userInfo));
+    setAuthState({
+      token,
+      expiresAt,
+      userInfo,
     });
+  };
 
-    const setAuthInfo = ({token, userInfo, expiresAt}) => {
-        localStorage.setItem('userInfo', JSON.stringify(userInfo));
-        setAuthState({
-            token,
-            expiresAt,
-            userInfo
-        });
-    };
+  const logout = () => {
+    localStorage.removeItem("userInfo");
 
-		const logout = () => {
-			localStorage.removeItem('userInfo');
+    setAuthState({
+      token: null,
+      expiresAt: null,
+      userInfo: {},
+    });
+    history.push("/login");
+  };
 
-			setAuthState({
-				token: null,
-        expiresAt: null,
-        userInfo: {}
-			});
-			history.push('/login');
-
-		};
-
-		  const isAuthenticated = () => {
+  const isAuthenticated = () => {
     if (!authState.expiresAt) {
       return false;
     }
-    return (
-      new Date().getTime() / 1000 < authState.expiresAt
-    );
+    return new Date().getTime() / 1000 < authState.expiresAt;
   };
 
-		const isAdmin = () => {
-			return authState.userInfo.role === 'admin';
-		};
+  const isAdmin = () => {
+    return authState.userInfo.role === "admin";
+  };
 
-    return (
-        <Provider
-            value = {{
-                authState,
-                setAuthState: authInfo => setAuthInfo(authInfo),
-								isAuthenticated,
-								logout,
-								isAdmin,
-            }}
-        >
-            {children}
-        </Provider>
-    );
+  return (
+    <Provider
+      value={{
+        authState,
+        setAuthState: (authInfo) => setAuthInfo(authInfo),
+        isAuthenticated,
+        logout,
+        isAdmin,
+      }}
+    >
+      {children}
+    </Provider>
+  );
 };
 
-export {AuthContext, AuthProvider}
+export { AuthContext, AuthProvider };

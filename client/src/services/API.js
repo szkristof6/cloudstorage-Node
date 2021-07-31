@@ -1,12 +1,9 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = '/';
+const API_URL = "/";
 
 const PublicFetch = axios.create({
-    baseURL: API_URL,
+  baseURL: API_URL,
 });
 
-
-export {
-    PublicFetch
-};
+export { PublicFetch };

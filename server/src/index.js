@@ -10,28 +10,24 @@ require('dotenv').config();
 const middlewares = require('./middlewares');
 const router = require('./router');
 
-const {
-    login,
-    register
-} = require('./functions/userMethods');
+const { login, register } = require('./functions/userMethods');
 
-const {
-    requireAuth,
-    attachUser
-} = require('./middlewares');
+const { requireAuth, attachUser } = require('./middlewares');
 
 const app = express();
 
 mongoose.connect(process.env.DATABASE_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 app.use(morgan('common'));
 app.use(helmet());
-app.use(cors({
+app.use(
+  cors({
     origin: process.env.CORS_ORIGIN,
-}));
+  })
+);
 app.use(express.json());
 
 app.post('/register', register);
@@ -49,5 +45,5 @@ app.use(middlewares.errorHandler);
 const PORT = process.env.PORT || 1337;
 
 app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`);
+  console.log(`Listening on port ${PORT}`);
 });

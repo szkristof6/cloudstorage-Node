@@ -1,7 +1,6 @@
-const mongoose = require('mongoose');
-const {
-    Schema
-} = mongoose;
+const mongoose = require("mongoose");
+
+const { Schema } = mongoose;
 
 /*
  * id - Uuid
@@ -17,51 +16,53 @@ const {
  */
 
 const requiredString = {
-    type: String,
-    required: true,
-}
+  type: String,
+  required: true,
+};
 
-const FilesSchema = new Schema({
+const FilesSchema = new Schema(
+  {
     dir_id: requiredString,
-    name: requiredString,
+    name: { ...requiredString },
     path: {
-        type: Array,
-        required: true,
+      type: Array,
+      required: true,
     },
     in_trash: {
-        type: Boolean,
-        default: false,
-        required: true,
+      type: Boolean,
+      default: false,
+      required: true,
     },
     meta: {
-        size: {
-            type: Number,
-            required: true,
-        },
-        type: requiredString,
-        lastModified: {
-            type: Date,
-            required: true
-        },
-        icon: requiredString,
-        name: requiredString,
+      size: {
+        type: Number,
+        required: true,
+      },
+      type: requiredString,
+      lastModified: {
+        type: Date,
+        required: true,
+      },
+      icon: requiredString,
+      name: requiredString,
     },
     share: {
-        mode: {
-            ...requiredString,
-            default: 'none'
-        },
-        permissions: {
-            ...requiredString,
-            default: 'read',
-        },
+      mode: {
+        ...requiredString,
+        default: "none",
+      },
+      permissions: {
+        ...requiredString,
+        default: "read",
+      },
     },
     user: requiredString,
-
-}, {
+  },
+  {
     timestamps: true,
-});
+  }
+);
 
-const Files = mongoose.model('Files', FilesSchema);
+const Files = mongoose.model("Files", FilesSchema);
 
 module.exports = Files;
