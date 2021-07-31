@@ -1,15 +1,15 @@
-import { useState, useEffect, useCallback, useContext } from "react";
-import { useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useCallback, useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { useDropzone } from 'react-dropzone';
 
-import InfoPanel from "./panels/InfoPanel";
-import Grid from "./panels/Grid";
-import Table from "./panels/Table";
-import Message from "./form/Message";
-import Loader from "./Loader";
+import InfoPanel from './panels/InfoPanel';
+import Grid from './panels/Grid';
+import Table from './panels/Table';
+import Message from './form/Message';
+import Loader from './Loader';
 
-import { FetchContext } from "../services/FetchContext";
-import { FileContext } from "../services/FileContext";
+import { FetchContext } from '../services/FetchContext';
+import { FileContext } from '../services/FileContext';
 
 const Area = () => {
   const [loading, setLoading] = useState(true);
@@ -17,7 +17,7 @@ const Area = () => {
 
   const [settings, setSettings] = useState({
     sortDesc: true,
-    sortType: "name",
+    sortType: 'name',
     InfoPanelOn: false,
     showGrid: true,
   });
@@ -79,7 +79,7 @@ const Area = () => {
       setLoading(true);
       await getData();
 
-      setRequestError("");
+      setRequestError('');
 
       setLoading(false);
     } catch (error) {
@@ -87,6 +87,12 @@ const Area = () => {
       setLoading(false);
     }
   };
+
+  const onDrop = useCallback((acceptedFiles) => {
+    console.log(acceptedFiles);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
     <div className="area">
@@ -99,7 +105,7 @@ const Area = () => {
           className="a-form"
           method="post"
           encType="multipart/form-data"
-          style={{ display: "block" }}
+          style={{ display: 'block' }}
         >
           <div className="file-area">
             <div className="file-menu">
@@ -108,11 +114,11 @@ const Area = () => {
                   {pageData.length > 0 &&
                     pageData.map((url) => (
                       <li key={url._id}>
-                        {pageID === "my-drive" ? (
+                        {pageID === 'my-drive' ? (
                           <a>{url.name}</a>
                         ) : url._id === 0 ? (
                           <Link
-                            onClick={() => setPageID("my-drive")}
+                            onClick={() => setPageID('my-drive')}
                             to={`/drive/my-drive`}
                           >
                             {url.name}
@@ -182,7 +188,7 @@ const Area = () => {
                   )}
                 </div>
                 <div
-                  className={`i-icon ${settings.InfoPanelOn && "active"}`}
+                  className={`i-icon ${settings.InfoPanelOn && 'active'}`}
                   onClick={openInfo}
                 >
                   <i
@@ -192,6 +198,14 @@ const Area = () => {
                   ></i>
                 </div>
               </div>
+            </div>
+            <div {...getRootProps()}>
+              <input {...getInputProps()} />
+              {isDragActive ? (
+                <p>Drop the files here ...</p>
+              ) : (
+                <p>Drag 'n' drop some files here, or click to select files</p>
+              )}
             </div>
             <div className="file-panel">
               {settings.showGrid ? (
@@ -231,7 +245,7 @@ const Area = () => {
           <input
             type="file"
             id="file"
-            style={{ display: "none" }}
+            style={{ display: 'none' }}
             webkitdirectory=""
             directory=""
             multiple=""

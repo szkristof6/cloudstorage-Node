@@ -79,8 +79,8 @@ const login = async (req, res, next) => {
 
 const register = async (req, res, next) => {
   try {
-    const Validiation = await RegisterSchema.isValid(req.body);
-    if (!Validiation) {
+    const Validation = await RegisterSchema.isValid(req.body);
+    if (!Validation) {
       return res.status(403).json({ message: 'Nincs minden mező kitöltve!' });
     }
 

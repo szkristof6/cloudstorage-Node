@@ -66,7 +66,6 @@ const getPaths = (paths) => {
 
 const getAllPath = (paths) => {
   if (paths[0] === null) return false;
-  // [['teszt', 'biosz'], ['harambe', 'penelope']]
 
   const result = paths.map((path) => {
     if (path === null) return false;

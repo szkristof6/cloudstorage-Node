@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
@@ -49,20 +49,20 @@ const FilesSchema = new Schema(
     share: {
       mode: {
         ...requiredString,
-        default: "none",
+        default: 'none',
       },
       permissions: {
         ...requiredString,
-        default: "read",
+        default: 'read',
       },
     },
     user: requiredString,
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-const Files = mongoose.model("Files", FilesSchema);
+const Files = mongoose.model('Files', FilesSchema);
 
 module.exports = Files;

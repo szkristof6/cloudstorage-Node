@@ -134,7 +134,7 @@ const storage = multer.diskStorage({
         ...dirSplit,
       ]).map((x) => x.join('/'));
 
-      dirs.map((dir) => {
+      dirs.forEach((dir) => {
         if (!fs.existsSync(path.resolve(uploadPath, dir))) {
           fs.mkdirSync(path.resolve(uploadPath, dir));
         }

@@ -1,21 +1,21 @@
 import { Link, useHistory } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
+import { FileContext } from '../../services/FileContext';
 
 import Selectable from "selectable.js";
 
 import { humanReadableByte, getDate } from "../../global";
 
 const Table = ({
-  pageID,
-  setPageID,
-  files,
   loading,
   setSelected,
-  folders,
   changeSort,
   settings,
 }) => {
   const history = useHistory();
+
+  const fileContext = useContext(FileContext);
+  const {files, folders, setPageID, pageID} = fileContext;
 
   const setSelectable = () => {
     const selectionArea = document.querySelector("#dragarea");

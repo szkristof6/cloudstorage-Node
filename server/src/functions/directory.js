@@ -112,7 +112,7 @@ const createDirectory = async (dirs, user, containingDirectory) => {
       } catch (error) {
         throw new Error(error);
       }
-    })
+    }),
   );
 
   // console.log(directoryResult);

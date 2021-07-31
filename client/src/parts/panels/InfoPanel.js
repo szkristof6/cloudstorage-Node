@@ -1,16 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import { humanReadableByte, getDate } from "../../global";
+
+import { FileContext } from '../../services/FileContext';
 
 const InfoPanel = ({
   settings,
   closeInfo,
   selected,
-  pageData,
-  files,
-  folders,
 }) => {
   const [infoItem, setInfoItem] = useState(null);
+
+  const fileContext = useContext(FileContext);
+  const {files, folders, pageData} = fileContext;
 
   useEffect(() => {
     if (pageData.length > 0) {
