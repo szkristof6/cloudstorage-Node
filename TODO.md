@@ -23,7 +23,7 @@ Project Description
 - [x] Authorization  
 - [ ] Trash 
 
-- [ ] Folder create in database on upload
+- [x] Folder create in database on upload
 
 ### In Progress
 

@@ -24,19 +24,20 @@ const getURLsForPaths = async (path) => {
       temp.shift();
 
       if (temp.length > 0) {
-        const returnArray = [];
-        temp.forEach(async (i) => {
-          const name = i.pop();
+        const returnArray = await Promise.all(
+          temp.map(async (i) => {
+            const name = i.pop();
 
-          const url = await Directories.findOne({
-            path: i,
-            name,
-          })
-            .lean()
-            .select('_id name');
+            const url = await Directories.findOne({
+              path: i,
+              name,
+            })
+              .lean()
+              .select('_id name');
 
-          returnArray.push(url);
-        });
+            return url;
+          }),
+        );
         return returnArray;
       }
       return temp;
