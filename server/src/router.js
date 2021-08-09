@@ -46,26 +46,50 @@ const getURLsForPaths = async (path) => {
   return [];
 };
 
+const getQueryParams = (request) => {
+  const { username } = request.user;
+
+  const trashQuery = {
+    user: username,
+    in_trash: true,
+  };
+
+  const sharedQuery = {
+    'share.mode': 'share',
+    user: username,
+    in_trash: false,
+  };
+
+  if (request.query.PGID === 'trash') return trashQuery;
+  if (request.query.PGID === 'shared') return sharedQuery;
+
+  const pageID = request.query.PGID === 'my-drive' ? 0 : request.query.PGID;
+
+  const normalQuery = {
+    dir_id: pageID,
+    user: username,
+    in_trash: false,
+  };
+
+  return normalQuery;
+};
+
 router.get('/', async (req, res, next) => {
   try {
-    const pageID = req.query.PGID === 'my-drive' ? 0 : req.query.PGID;
-    const { username } = req.user;
+    const pageID = ['my-drive', 'trash', 'shared'].includes(req.query.PGID) ? 0 : req.query.PGID;
 
-    const files = await Files.find({
-      dir_id: pageID,
-      user: username,
-      in_trash: false,
-    })
+    const files = await Files.find(getQueryParams(req))
       .lean()
       .select('_id in_trash name meta user createdAt updatedAt');
 
-    const dirs = await Directories.find({
-      dir_id: pageID,
-      user: username,
-      in_trash: false,
-    })
+    const dirs = await Directories.find(getQueryParams(req))
       .lean()
       .select('_id in_trash name user createdAt updatedAt');
+
+    const queryItems = {
+      files,
+      dirs,
+    };
 
     const dir = pageID !== 0
       ? await Directories.findOne({
@@ -87,18 +111,23 @@ router.get('/', async (req, res, next) => {
       : [];
 
     res.json({
-      queryItems: {
-        files,
-        dirs,
-      },
-      queryData: [
-        {
-          _id: 0,
-          name: 'Saját mappa',
-        },
-        ...URLs,
-        ...currentDirectory,
-      ],
+      queryItems,
+      queryData:
+      ['trash', 'shared'].includes(req.query.PGID)
+        ? [
+          {
+            _id: 0,
+            name: `${req.query.PGID === 'trash' ? 'Saját mappa kukaja' : 'Megosztottak'}`,
+          },
+        ]
+        : [
+          {
+            _id: 0,
+            name: 'Saját mappa',
+          },
+          ...URLs,
+          ...currentDirectory,
+        ],
     });
   } catch (error) {
     next(error);

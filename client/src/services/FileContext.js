@@ -26,15 +26,11 @@ const FileProvider = ({ children }) => {
     for (const i of files) formData.append('files', i);
 
     try {
-      const { data } = await axios.post(
-        `${API_URL}/upload?PGID=${pageID}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+      const { data } = await axios.post(`${API_URL}/upload?PGID=${pageID}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       await getData();
 
       return data;
@@ -45,20 +41,24 @@ const FileProvider = ({ children }) => {
 
   const getData = async () => {
     try {
-      setPageID(Location.pathname.split('/').pop());
-      const { data } = await authAxios.get('/', {
-        params: {
-          PGID: pageID,
-        },
-      });
+      const location = Location.pathname.split('/').pop();
+      if (location) {
+        setPageID(location);
+        const { data } = await authAxios.get('/', {
+          params: {
+            PGID: pageID,
+          },
+        });
 
-      const { queryData, queryItems } = data;
+        const { queryData, queryItems } = data;
 
-      setPageData(queryData);
-      setFolders(queryItems.dirs);
-      setFiles(queryItems.files);
+        setPageData(queryData);
+        setFolders(queryItems.dirs);
+        setFiles(queryItems.files);
 
-      return true;
+        return true;
+      }
+      throw new Error();
     } catch (error) {
       throw new Error(error);
     }

@@ -1,23 +1,21 @@
-import { Link, useHistory } from "react-router-dom";
-import { useEffect, useContext } from "react";
+import { Link, useHistory } from 'react-router-dom';
+import React, { useEffect, useContext } from 'react';
 import { FileContext } from '../../services/FileContext';
 
-import Selectable from "selectable.js";
+import Selectable from 'selectable.js';
 
-const Grid = ({
-  loading,
-  setSelected,
-  changeSort,
-  settings,
-}) => {
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowUp, faArrowDown, faFolder } from '@fortawesome/free-solid-svg-icons';
+
+const Grid = ({ loading, setSelected, changeSort, settings }) => {
   const history = useHistory();
 
   const fileContext = useContext(FileContext);
-  const {files, folders, setPageID, pageID} = fileContext;
+  const { files, folders, setPageID, pageID } = fileContext;
 
   const setSelectable = () => {
-    const selectionArea = document.querySelector("#dragarea");
-    const selectableItems = selectionArea.querySelectorAll(".grid-item");
+    const selectionArea = document.querySelector('#gridPanel');
+    const selectableItems = selectionArea.querySelectorAll('.grid-item');
 
     const selectable = new Selectable({
       filter: selectableItems,
@@ -28,30 +26,30 @@ const Grid = ({
       },
       lasso: {
         zIndex: 10,
-        border: "1px solid #d4d4d4",
-        background: "rgba(194, 194, 194, 0.1)",
-        boxShadow: "0px 0px 5px 3px rgba(244, 244, 244, 1)",
+        border: '1px solid #d4d4d4',
+        background: 'rgba(194, 194, 194, 0.1)',
+        boxShadow: '0px 0px 5px 3px rgba(244, 244, 244, 1)',
       },
       toggle: true,
-      ignore: [".order i", ".order span"],
+      ignore: ['.order i', '.order span'],
       saveState: true,
       autoRefresh: true,
     });
 
-    selectable.on("start", () => {
+    selectable.on('start', () => {
       const selectedItems = selectable.getSelectedItems();
       selectable.deselect(selectedItems);
 
       setSelected([]);
     });
 
-    selectable.on("end", (_, selection) => {
+    selectable.on('end', (_, selection) => {
       const newSelected = [];
       selection.forEach((select) => {
         const { node } = select;
-        const link = node.querySelector("a");
+        const link = node.querySelector('a');
 
-        const splitted = link.href.split("/");
+        const splitted = link.href.split('/');
         const data = {
           type: splitted[4],
           id: splitted[5],
@@ -66,7 +64,7 @@ const Grid = ({
   useEffect(() => !loading && setSelectable(), [loading, pageID]);
 
   return (
-    <div className="dragarea" id="dragarea">
+    <div id="gridPanel" className='dragarea'>
       <div className="dirs">
         <div className="type-row">
           <div className="m-name">Mappák</div>
@@ -75,17 +73,17 @@ const Grid = ({
               Név
             </span>
             {settings.sortDesc ? (
-              <i
+              <FontAwesomeIcon
                 onClick={changeSort}
                 title={`Rendezési sorrend változtatása`}
-                className="fas fa-arrow-up"
-              ></i>
+                icon={faArrowUp}
+              ></FontAwesomeIcon>
             ) : (
-              <i
+              <FontAwesomeIcon
                 onClick={changeSort}
                 title={`Rendezési sorrend változtatása`}
-                className="fas fa-arrow-down"
-              ></i>
+                icon={faArrowDown}
+              ></FontAwesomeIcon>
             )}
           </div>
         </div>
@@ -102,12 +100,12 @@ const Grid = ({
                     }}
                     to={`/drive/folder/${dir._id}`}
                   >
-                    <i className="fas fa-folder"></i>
+                    <FontAwesomeIcon icon={faFolder}></FontAwesomeIcon>
                     <span className="r-text">{dir.name}</span>
                   </Link>
                 </div>
               ))
-            : "Nincs mappa.."}
+            : 'Nincs mappa..'}
         </div>
       </div>
       <div className="files">
@@ -119,19 +117,19 @@ const Grid = ({
             ? files.map((file) => (
                 <div className="grid-item" title={file.name} key={file._id}>
                   <div className="preview">
-                    <i className={file.meta.icon}></i>
+                    <FontAwesomeIcon icon={file.meta.icon}></FontAwesomeIcon>
                   </div>
                   <Link
                     className="button"
                     onClick={(e) => e.preventDefault()}
                     to={`/drive/file/${file._id}`}
                   >
-                    <i className={file.meta.icon}></i>
+                    <FontAwesomeIcon icon={file.meta.icon}></FontAwesomeIcon>
                     <span className="r-text">{file.name}</span>
                   </Link>
                 </div>
               ))
-            : "Nincs fájl.."}
+            : 'Nincs fájl..'}
         </div>
       </div>
     </div>

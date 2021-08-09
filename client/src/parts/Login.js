@@ -1,15 +1,18 @@
-import * as Yup from "yup";
-import { Form, Formik, Field, ErrorMessage } from "formik";
-import { useState, useContext } from "react";
-import { Redirect } from "react-router-dom";
-import { PublicFetch } from "../services/API";
-import { AuthContext } from "../services/authContext";
-import Message from "./form/Message";
-import Logo from "../static/Logo.png";
+import * as Yup from 'yup';
+import { Form, Formik, Field, ErrorMessage } from 'formik';
+import { useState, useContext } from 'react';
+import { Redirect } from 'react-router-dom';
+import { PublicFetch } from '../services/API';
+import { AuthContext } from '../services/authContext';
+import Message from './form/Message';
+import Logo from '../static/Logo.png';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faLock } from '@fortawesome/free-solid-svg-icons';
 
 const LoginSchema = Yup.object().shape({
-  username: Yup.string().required("Add meg a felhasználóneved!"),
-  password: Yup.string().required("Add meg a jelszavad!"),
+  username: Yup.string().required('Add meg a felhasználóneved!'),
+  password: Yup.string().required('Add meg a jelszavad!'),
 });
 
 const Login = () => {
@@ -22,7 +25,7 @@ const Login = () => {
   const submitCredentials = async (credentials) => {
     try {
       setLoginLoading(true);
-      const { data } = await PublicFetch.post("login", credentials);
+      const { data } = await PublicFetch.post('login', credentials);
 
       authContext.setAuthState(data);
       setLoginSuccess(data.message);
@@ -56,19 +59,15 @@ const Login = () => {
                 <div className="login">
                   <Formik
                     initialValues={{
-                      username: "",
-                      password: "",
+                      username: '',
+                      password: '',
                     }}
                     onSubmit={(values) => submitCredentials(values)}
                     validationSchema={LoginSchema}
                   >
                     <Form>
-                      {loginSuccess && (
-                        <Message state="is-success" text={loginSuccess} />
-                      )}
-                      {loginError && (
-                        <Message state="is-danger" text={loginError} />
-                      )}
+                      {loginSuccess && <Message state="is-success" text={loginSuccess} />}
+                      {loginError && <Message state="is-danger" text={loginError} />}
                       <div className="field is-horizontal">
                         <div className="field-label is-normal">
                           <label className="label">Felhasználónév</label>
@@ -83,7 +82,7 @@ const Login = () => {
                                 placeholder="Add meg a felhasználónevedet"
                               />
                               <span className="icon is-small is-left">
-                                <i className="fas fa-user"></i>
+                                <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
                               </span>
                             </p>
                             <ErrorMessage name="username" component="div" />
@@ -104,7 +103,7 @@ const Login = () => {
                                 placeholder="Add meg a jelszavad"
                               />
                               <span className="icon is-small is-left">
-                                <i className="fas fa-lock"></i>
+                                <FontAwesomeIcon icon={faLock}></FontAwesomeIcon>
                               </span>
                             </p>
                             <ErrorMessage name="password" component="div" />

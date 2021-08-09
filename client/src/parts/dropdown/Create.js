@@ -1,31 +1,34 @@
-import { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
-import { FileContext } from "../../services/FileContext";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFolderPlus, faFileUpload, faUpload } from '@fortawesome/free-solid-svg-icons';
+
+import { FileContext } from '../../services/FileContext';
 
 const dropdownMenu = [
   {
-    type: "modal",
-    label: "Mappa létrehozása",
-    icon: "fas fa-folder-plus",
+    type: 'modal',
+    label: 'Mappa létrehozása',
+    icon: faFolderPlus,
     onClick: (e) => console.log(e),
   },
   {
-    type: "input",
-    label: "Fájl feltöltés",
-    icon: "fas fa-file-upload",
-    id: "file",
+    type: 'input',
+    label: 'Fájl feltöltés',
+    icon: faFileUpload,
+    id: 'file',
   },
   {
-    type: "input",
-    label: "Mappa feltöltés",
-    icon: "fas fa-upload",
-    id: "directory",
+    type: 'input',
+    label: 'Mappa feltöltés',
+    icon: faUpload,
+    id: 'directory',
   },
 ];
 
 const Create = ({ id }) => {
-  const [files, setFiles] = useState("");
+  const [files, setFiles] = useState('');
 
   const fileContext = useContext(FileContext);
   const { fileUpload } = fileContext;
@@ -38,7 +41,6 @@ const Create = ({ id }) => {
     }
   };
 
-
   useEffect(() => upload(), [files]);
 
   return (
@@ -47,16 +49,16 @@ const Create = ({ id }) => {
         <ul className="d-ul">
           {dropdownMenu.map((item, index) => (
             <li key={index}>
-              {item.type === "modal" ? (
-                <Link onClick={item.onClick} to={"#"} className="modal-button">
-                  <i className={item.icon}></i>
+              {item.type === 'modal' ? (
+                <Link onClick={item.onClick} to={'#'} className="modal-button">
+                  <FontAwesomeIcon icon={item.icon}></FontAwesomeIcon>
                   {item.label}
                 </Link>
               ) : (
-                item.type === "input" && (
+                item.type === 'input' && (
                   <a>
-                    <i className={item.icon}></i>
-                    {item.id === "directory" ? (
+                    <FontAwesomeIcon icon={item.icon}></FontAwesomeIcon>
+                    {item.id === 'directory' ? (
                       <input
                         type="file"
                         name="files"
@@ -65,7 +67,7 @@ const Create = ({ id }) => {
                         multiple
                         webkitdirectory="true"
                         directory="true"
-                        style={{ display: "none" }}
+                        style={{ display: 'none' }}
                       ></input>
                     ) : (
                       <input
@@ -74,7 +76,7 @@ const Create = ({ id }) => {
                         id={item.id}
                         onChange={(e) => setFiles(e.target.files)}
                         multiple
-                        style={{ display: "none" }}
+                        style={{ display: 'none' }}
                       ></input>
                     )}
                     <label htmlFor={item.id}>{item.label}</label>

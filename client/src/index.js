@@ -1,25 +1,48 @@
-import React, { Suspense, useContext, lazy } from "react";
-import ReactDOM from "react-dom";
+import React, { Suspense, useContext, lazy } from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+
+import './static/index.css';
+import 'bulma-pageloader';
+
+import { AuthProvider, AuthContext } from './services/authContext';
+import { FetchProvider } from './services/FetchContext';
+import { FileProvider } from './services/FileContext';
+import Loader from './parts/Loader';
+
+import { library } from '@fortawesome/fontawesome-svg-core';
 import {
-  BrowserRouter as Router,
-  Redirect,
-  Route,
-  Switch,
-} from "react-router-dom";
+  faQuestionCircle,
+  faFileExcel,
+  faKey,
+  faFileWord,
+  faFileArchive,
+  faFileAlt,
+  faFileImage,
+  faFileAudio,
+  faFilePdf,
+  faFilm,
+} from '@fortawesome/free-solid-svg-icons';
 
-import "./static/index.css";
-import "./static/fontawesome/css/all.min.css";
-import "bulma-pageloader";
+library.add(
+  faQuestionCircle,
+  faFileExcel,
+  faKey,
+  faFileWord,
+  faFileArchive,
+  faFileAlt,
+  faFileImage,
+  faFileAudio,
+  faFilePdf,
+  faFilm
+);
 
-import { AuthProvider, AuthContext } from "./services/authContext";
-import { FetchProvider } from "./services/FetchContext";
-import { FileProvider } from "./services/FileContext";
-import Loader from "./parts/Loader";
+const Header = lazy(() => import('./parts/Header'));
+const Content = lazy(() => import('./parts/Content'));
+const Login = lazy(() => import('./parts/Login'));
+const Register = lazy(() => import('./parts/Register'));
+const TestSite = lazy(() => import('./parts/TestSite'));
 
-const Header = lazy(() => import("./parts/Header"));
-const Content = lazy(() => import("./parts/Content"));
-const Login = lazy(() => import("./parts/Login"));
-const Register = lazy(() => import("./parts/Register"));
 
 const AuthenticatedRoute = ({ children, ...rest }) => {
   const authContext = useContext(AuthContext);
@@ -55,9 +78,7 @@ const AdminRoute = ({ children, ...rest }) => {
 
 const AppRoutes = () => {
   return (
-    <Suspense
-      fallback={<Loader active={true} color="is-white" label="Töltés..." />}
-    >
+    <Suspense fallback={<Loader active={true} color="is-white" label="Töltés..." />}>
       <Switch>
         <AuthenticatedRoute path="/" exact>
           <Redirect to="/drive/my-drive" />
@@ -73,7 +94,7 @@ const AppRoutes = () => {
           <Content />
         </AuthenticatedRoute>
         <AdminRoute path="/admin" exact>
-          <h1>Admin</h1>
+          <TestSite />
         </AdminRoute>
       </Switch>
     </Suspense>
@@ -92,5 +113,5 @@ ReactDOM.render(
       </AuthProvider>
     </Router>
   </React.StrictMode>,
-  document.querySelector(".app")
+  document.querySelector('.app')
 );

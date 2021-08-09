@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
 
 :root {
   --red: #1967d2;
@@ -26,7 +26,7 @@ html {
 }
 
 body {
-  font-family: "Cabin", sans-serif !important;
+  font-family: 'Cabin', sans-serif !important;
 }
 
 .header {
@@ -34,7 +34,7 @@ body {
 
   grid-template-columns: 256px auto 256px;
   grid-template-rows: auto;
-  grid-template-areas: "logo kereses fiok";
+  grid-template-areas: 'logo kereses fiok';
 
   padding: 12px;
   border-bottom: 1px solid #dadce0;
@@ -248,7 +248,7 @@ ul {
   box-shadow: 0 1px 3px 0 rgb(60 64 67 / 30%), 0 4px 8px 3px rgb(60 64 67 / 15%);
 }
 
-.new > i {
+.new > svg {
   position: absolute;
   left: 20px;
   font-weight: 600;
@@ -270,8 +270,7 @@ ul {
   box-shadow: 0 8px 10px 1px rgb(0 0 0 / 14%), 0 3px 14px 2px rgb(0 0 0 / 12%),
     0 5px 5px -3px rgb(0 0 0 / 20%);
   transition: height 267ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
-    margin-top 267ms cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 267ms cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top 267ms cubic-bezier(0.4, 0, 0.2, 1), opacity 267ms cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 6px;
 }
 
@@ -317,8 +316,8 @@ ul {
   text-decoration: none;
 }
 
-.n-ul li a i,
-.d-ul li a i {
+.n-ul li a svg,
+.d-ul li a svg {
   margin-left: 15px;
   margin-right: 13px;
 
@@ -326,7 +325,7 @@ ul {
   font-size: 18px;
 }
 
-a.active i {
+a.active svg {
   color: var(--red) !important;
 }
 
@@ -428,7 +427,7 @@ progress {
   display: grid;
   grid-template-columns: auto auto;
   grid-template-rows: auto;
-  grid-template-areas: "tabs info";
+  grid-template-areas: 'tabs info';
 
   z-index: 10;
 }
@@ -454,8 +453,7 @@ progress {
   outline: none;
   -webkit-tap-highlight-color: transparent;
   transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1),
-    background 200ms cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 400ms cubic-bezier(0.4, 0, 0.2, 1);
+    background 200ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 400ms cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 50%;
   min-width: 0;
   overflow: visible;
@@ -481,14 +479,7 @@ progress {
   vertical-align: middle;
 }
 
-.info i.fa-info-circle,
-.info i.fa-bars,
-.info i.fa-table,
-.info i.fa-ellipsis-v,
-.info i.fa-download,
-.info i.fa-trash,
-.info i.fa-share-square,
-.info i.fa-trash-restore {
+.info svg {
   left: 50%;
   line-height: 0;
   position: absolute;
@@ -530,7 +521,7 @@ progress {
   display: grid;
   grid-template-columns: auto max-content;
   grid-template-rows: auto;
-  grid-template-areas: "dragarea info_panel";
+  grid-template-areas: 'dragarea info_panel';
 }
 
 .dragarea {
@@ -603,11 +594,11 @@ progress {
   display: grid;
   grid-template-columns: 70px 260px 70px;
   grid-template-rows: auto;
-  grid-template-areas: "icon name close";
+  grid-template-areas: 'icon name close';
   color: #5f6368;
 }
 
-.i-header > i:first-of-type {
+.i-header > svg:first-of-type {
   grid-area: icon;
   justify-self: center;
   margin: 18px;
@@ -659,10 +650,11 @@ progress {
   font-size: larger;
 }
 
-.i-preview i {
+.i-preview svg {
   padding: 80px 0;
   font-size: 100px;
   width: 100%;
+  height: 100%;
   text-align: center;
 }
 
@@ -724,7 +716,7 @@ progress {
   display: grid;
   grid-template-columns: auto auto;
   grid-template-rows: auto;
-  grid-template-areas: "m-name order";
+  grid-template-areas: 'm-name order';
 }
 
 .m-name {
@@ -756,16 +748,17 @@ progress {
   transition: background-color 0.3s linear;
 }
 
-.order i,
-.h-elem i {
+.order svg,
+.h-elem svg {
   background-color: white;
   border-radius: 100%;
   padding: 10px;
   transition: background-color 0.3s linear;
+  height: 10px;
 }
 
-.order i:hover,
-.h-elem i:hover {
+.order svg:hover,
+.h-elem svg:hover {
   background-color: #e0e0e0;
   transition: background-color 0.3s linear;
 }
@@ -802,7 +795,7 @@ a.row.ui-selected {
   box-shadow: 0 0 0 0.125em var(--active) !important;
 }
 
-a.button > i {
+a.button > svg {
   position: absolute;
   left: 0;
   font-size: 20px;
@@ -858,7 +851,7 @@ a.row {
   position: relative;
 }
 
-.be-text i {
+.be-text svg {
   margin-right: 10px;
   font-size: 22px;
 }
@@ -972,8 +965,8 @@ a.row div:nth-child(4) {
   grid-template-columns: 50px auto;
   grid-template-rows: auto;
   grid-template-areas:
-    "u-icon u-text"
-    "u-icon u-progress";
+    'u-icon u-text'
+    'u-icon u-progress';
 
   padding: 10px;
   border-bottom: 1px solid #dadce0;
@@ -1045,8 +1038,8 @@ a.row div:nth-child(4) {
   grid-template-columns: 60px auto auto;
   grid-template-rows: auto;
   grid-template-areas:
-    "s-icon s-text s-perma"
-    "s-icon s-desc s-perma";
+    's-icon s-text s-perma'
+    's-icon s-desc s-perma';
 
   margin-left: 15px;
   margin-bottom: 20px;

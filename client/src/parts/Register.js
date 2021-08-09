@@ -1,16 +1,19 @@
-import * as Yup from "yup";
-import { Form, Formik, Field, ErrorMessage } from "formik";
-import { useState, useContext } from "react";
-import { Redirect } from "react-router-dom";
-import { PublicFetch } from "../services/API";
-import { AuthContext } from "../services/authContext";
-import Message from "./form/Message";
-import Logo from "../static/Logo.png";
+import * as Yup from 'yup';
+import { Form, Formik, Field, ErrorMessage } from 'formik';
+import { useState, useContext } from 'react';
+import { Redirect } from 'react-router-dom';
+import { PublicFetch } from '../services/API';
+import { AuthContext } from '../services/authContext';
+import Message from './form/Message';
+import Logo from '../static/Logo.png';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faLock, faAt } from '@fortawesome/free-solid-svg-icons';
 
 const RegisterSchema = Yup.object().shape({
-  email: Yup.string().email().required("Add meg az email címedet"),
-  username: Yup.string().required("Add meg a felhasználóneved!"),
-  password: Yup.string().required("Add meg a jelszavad!"),
+  email: Yup.string().email().required('Add meg az email címedet'),
+  username: Yup.string().required('Add meg a felhasználóneved!'),
+  password: Yup.string().required('Add meg a jelszavad!'),
 });
 
 const Register = () => {
@@ -23,7 +26,7 @@ const Register = () => {
   const submitCredentials = async (credentials) => {
     try {
       setRegisterLoading(true);
-      const { data } = await PublicFetch.post("register", credentials);
+      const { data } = await PublicFetch.post('register', credentials);
 
       authContext.setAuthState(data);
       setRegisterError(null);
@@ -35,7 +38,7 @@ const Register = () => {
       setRegisterLoading(false);
       const { data } = error.response;
       setRegisterError(data.message);
-      setRegisterSuccess("");
+      setRegisterSuccess('');
     }
   };
 
@@ -57,20 +60,16 @@ const Register = () => {
                 <div className="login">
                   <Formik
                     initialValues={{
-                      username: "",
-                      email: "",
-                      password: "",
+                      username: '',
+                      email: '',
+                      password: '',
                     }}
                     onSubmit={(values) => submitCredentials(values)}
                     validationSchema={RegisterSchema}
                   >
                     <Form>
-                      {registerSuccess && (
-                        <Message state="is-success" text={registerSuccess} />
-                      )}
-                      {registerError && (
-                        <Message state="is-danger" text={registerError} />
-                      )}
+                      {registerSuccess && <Message state="is-success" text={registerSuccess} />}
+                      {registerError && <Message state="is-danger" text={registerError} />}
                       <div className="field is-horizontal">
                         <div className="field-label is-normal">
                           <label className="label">Felhasználónév</label>
@@ -85,7 +84,7 @@ const Register = () => {
                                 placeholder="Add meg a felhasználónevedet"
                               />
                               <span className="icon is-small is-left">
-                                <i className="fas fa-user"></i>
+                                <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
                               </span>
                             </p>
                             <ErrorMessage name="username" component="div" />
@@ -106,7 +105,7 @@ const Register = () => {
                                 placeholder="Add meg az email címedet"
                               />
                               <span className="icon is-small is-left">
-                                <i className="fas fa-user"></i>
+                                <FontAwesomeIcon icon={faAt}></FontAwesomeIcon>
                               </span>
                             </p>
                             <ErrorMessage name="email" component="div" />
@@ -127,7 +126,7 @@ const Register = () => {
                                 placeholder="Add meg a jelszavad"
                               />
                               <span className="icon is-small is-left">
-                                <i className="fas fa-lock"></i>
+                                <FontAwesomeIcon icon={faLock}></FontAwesomeIcon>
                               </span>
                             </p>
                             <ErrorMessage name="password" component="div" />
@@ -140,7 +139,7 @@ const Register = () => {
                           type="submit"
                           className="button is-medium is-rounded is-info is-fullwidth"
                         >
-                          Bejelentkezés
+                          Registráció
                         </button>
                       </div>
                     </Form>

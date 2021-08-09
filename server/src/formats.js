@@ -1,27 +1,27 @@
 const types = [
   {
     type: ['video'],
-    icon: 'fas fa-film',
+    icon: 'film',
     name: 'Video',
   },
   {
     type: ['pdf'],
-    icon: 'far fa-file-pdf',
+    icon: 'file-pdf',
     name: 'PDF',
   },
   {
     type: ['audio', 'x-cdf'],
-    icon: 'far fa-file-audio',
+    icon: 'file-audio',
     name: 'Hang',
   },
   {
     type: ['image'],
-    icon: 'far fa-file-image',
+    icon: 'file-image',
     name: 'Kép',
   },
   {
     type: ['text'],
-    icon: 'far fa-file-alt',
+    icon: 'file-alt',
     name: 'Szöveg fájl',
   },
   {
@@ -37,7 +37,7 @@ const types = [
       'x-7z-compressed',
       'octet-stream',
     ],
-    icon: 'far fa-file-archive',
+    icon: 'file-archive',
     name: 'Tömörített archívum',
   },
   {
@@ -46,17 +46,17 @@ const types = [
       'vnd.openxmlformats-officedocument.wordprocessingml.document',
       'vnd.oasis.opendocument.text',
     ],
-    icon: 'far fa-file-word',
+    icon: 'file-word',
     name: 'Word-file',
   },
   {
     type: ['x-x509-ca-cert'],
-    icon: 'fas fa-key',
+    icon: 'key',
     name: 'Key-file',
   },
   {
     type: ['vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-    icon: 'fas fa-file-excel',
+    icon: 'file-excel',
     name: 'Excel-file',
   },
 ];
@@ -68,7 +68,7 @@ const iconByFormat = (item) => {
     .pop();
 
   return {
-    icon: foundIcon ? foundIcon.icon : 'far fa-question-circle',
+    icon: foundIcon ? foundIcon.icon : 'question-circle',
     name: foundIcon ? foundIcon.name : 'Ismeretlen fájl',
   };
 };

@@ -10,20 +10,25 @@ Project Description
 - [x] Sessions  
 - [ ] contentMenu  
 - [ ] Share  
-- [ ] Shared  
+- [x] Shared  
+- [] Shared Page Custom Things
 - [x] Location links  
-- [ ] Dropzone.js  
+- [x] Dropzone.js  
 - [ ] Sortable.js  
-- [ ] Drag 'n Drop  
+- [x] Drag 'n Drop  
 - [x] Info panel  
 - [ ] Sort by type  
 - [x] List view  
 - [x] onDoubleClick Event  
 - [ ] Dropdown menus  
 - [x] Authorization  
-- [ ] Trash 
+- [] Place in Trash 
+- [x] Trash 
+- [] Trash Page Custom Things
 
 - [x] Folder create in database on upload
+
+- [x] Icon show 
 
 ### In Progress
 

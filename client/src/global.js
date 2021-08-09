@@ -1,7 +1,7 @@
 export const getDate = (date) => {
   const dateObj = new Date(date);
-  const month = dateObj.toLocaleString("default", {
-    month: "short",
+  const month = dateObj.toLocaleString('default', {
+    month: 'short',
   });
   const day = dateObj.getUTCDate();
   const year = dateObj.getUTCFullYear();
@@ -11,7 +11,7 @@ export const getDate = (date) => {
 
 export const humanReadableByte = (fileSizeInBytes) => {
   let i = -1;
-  const byteUnits = [" kB", " MB", " GB", " TB", "PB", "EB", "ZB", "YB"];
+  const byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
   do {
     fileSizeInBytes = fileSizeInBytes / 1024;
     i++;

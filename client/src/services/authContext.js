@@ -1,6 +1,6 @@
-import { createContext, useState } from "react";
-import { useHistory } from "react-router-dom";
-import Cookies from "js-cookie";
+import { createContext, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const AuthContext = createContext();
 const { Provider } = AuthContext;
@@ -8,8 +8,8 @@ const { Provider } = AuthContext;
 const AuthProvider = ({ children }) => {
   const history = useHistory();
 
-  const expiresAt = Cookies.get("EXPAT");
-  const userInfo = localStorage.getItem("userInfo");
+  const expiresAt = Cookies.get('EXPAT');
+  const userInfo = localStorage.getItem('userInfo');
 
   const [authState, setAuthState] = useState({
     token: null,
@@ -18,7 +18,7 @@ const AuthProvider = ({ children }) => {
   });
 
   const setAuthInfo = ({ token, userInfo, expiresAt }) => {
-    localStorage.setItem("userInfo", JSON.stringify(userInfo));
+    localStorage.setItem('userInfo', JSON.stringify(userInfo));
     setAuthState({
       token,
       expiresAt,
@@ -27,14 +27,14 @@ const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem("userInfo");
+    localStorage.removeItem('userInfo');
 
     setAuthState({
       token: null,
       expiresAt: null,
       userInfo: {},
     });
-    history.push("/login");
+    history.push('/login');
   };
 
   const isAuthenticated = () => {
@@ -45,7 +45,7 @@ const AuthProvider = ({ children }) => {
   };
 
   const isAdmin = () => {
-    return authState.userInfo.role === "admin";
+    return authState.userInfo.role === 'admin';
   };
 
   return (

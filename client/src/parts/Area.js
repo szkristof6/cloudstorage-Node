@@ -1,6 +1,17 @@
-import { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faShareSquare,
+  faTrash,
+  faDownload,
+  faEllipsisV,
+  faBars,
+  faTable,
+  faInfoCircle,
+} from '@fortawesome/free-solid-svg-icons';
 
 import InfoPanel from './panels/InfoPanel';
 import Grid from './panels/Grid';
@@ -8,7 +19,6 @@ import Table from './panels/Table';
 import Message from './form/Message';
 import Loader from './Loader';
 
-import { FetchContext } from '../services/FetchContext';
 import { FileContext } from '../services/FileContext';
 
 const Area = () => {
@@ -22,18 +32,9 @@ const Area = () => {
     showGrid: true,
   });
 
-  const fetchContext = useContext(FetchContext);
   const fileContext = useContext(FileContext);
-  const {
-    getData,
-    folders,
-    setFolders,
-    files,
-    setFiles,
-    pageID,
-    setPageID,
-    pageData,
-  } = fileContext;
+  const { fileUpload, getData, folders, setFolders, files, setFiles, pageID, setPageID, pageData } =
+    fileContext;
 
   const sortByName = (x, y) => {
     let a = x.name.toUpperCase(),
@@ -88,11 +89,78 @@ const Area = () => {
     }
   };
 
-  const onDrop = useCallback((acceptedFiles) => {
-    console.log(acceptedFiles);
-  }, []);
+  const onDrop = async (acceptedFiles) => {
+    if (acceptedFiles) {
+      const data = await fileUpload(acceptedFiles);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+      console.log(data);
+    }
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    noClick: true,
+    noKeyboard: true,
+  });
+
+  const iconList = [
+    {
+      icon: faShareSquare,
+      title: `${selected.length} elem megosztása`,
+      visibility: 'one',
+      show: true,
+      onClick: (e) => console.log(e),
+    },
+    {
+      icon: faTrash,
+      title: `${selected.length} elem törlése`,
+      visibility: 'multiple',
+      show: true,
+      onClick: (e) => console.log(e),
+    },
+    {
+      icon: faDownload,
+      title: `${selected.length} elem letöltése`,
+      visibility: 'multiple',
+      show: true,
+      onClick: (e) => console.log(e),
+    },
+    {
+      icon: faEllipsisV,
+      title: `További műveletek`,
+      visibility: 'multiple',
+      show: true,
+      onClick: (e) => console.log(e),
+    },
+    {
+      icon: faBars,
+      title: `Listanézet`,
+      visibility: 'always',
+      show: settings.showGrid,
+      onClick: () => changeViewMode(),
+    },
+    {
+      icon: faTable,
+      title: `Rácsnézet`,
+      visibility: 'always',
+      show: !settings.showGrid,
+      onClick: () => changeViewMode(),
+    },
+    {
+      icon: faInfoCircle,
+      title: `Részletek megjelenítése`,
+      visibility: 'always',
+      show: true,
+      class: settings.InfoPanelOn ? 'active' : '',
+      onClick: () => openInfo(),
+    },
+  ];
+
+  const iconListPaint = (icon, index) => (
+    <div className={`i-icon ${icon.class || ''}`} key={index} onClick={icon.onClick}>
+      <FontAwesomeIcon icon={icon.icon} title={icon.title} aria-hidden="true"></FontAwesomeIcon>
+    </div>
+  );
 
   return (
     <div className="area">
@@ -114,20 +182,14 @@ const Area = () => {
                   {pageData.length > 0 &&
                     pageData.map((url) => (
                       <li key={url._id}>
-                        {pageID === 'my-drive' ? (
+                        {pageID === 'my-drive' || 'trash' ? (
                           <a>{url.name}</a>
                         ) : url._id === 0 ? (
-                          <Link
-                            onClick={() => setPageID('my-drive')}
-                            to={`/drive/my-drive`}
-                          >
+                          <Link onClick={() => setPageID('my-drive')} to={`/drive/my-drive`}>
                             {url.name}
                           </Link>
                         ) : (
-                          <Link
-                            onClick={() => setPageID(url._id)}
-                            to={`/drive/folder/${url._id}`}
-                          >
+                          <Link onClick={() => setPageID(url._id)} to={`/drive/folder/${url._id}`}>
                             {url.name}
                           </Link>
                         )}
@@ -136,120 +198,44 @@ const Area = () => {
                 </ul>
               </div>
               <div className="info">
-                {selected.length === 1 && (
-                  <div className="i-icon">
-                    <i
-                      className="fas fa-share-square"
-                      title={`${selected.length} elem megosztása`}
-                      aria-hidden="true"
-                    ></i>
-                  </div>
-                )}
-                {selected.length > 0 && (
-                  <>
-                    <div className="i-icon">
-                      <i
-                        className="fas fa-trash"
-                        title={`${selected.length} elem törlése`}
-                        aria-hidden="true"
-                      ></i>
-                    </div>
-                    <div className="i-icon">
-                      <i
-                        className="fas fa-download"
-                        title={`${selected.length} elem letöltése`}
-                        aria-hidden="true"
-                      ></i>
-                    </div>
-                    <div className="i-icon">
-                      <i
-                        className="fas fa-ellipsis-v"
-                        title={`További műveletek`}
-                        aria-hidden="true"
-                      ></i>
-                    </div>
-
-                    <div className="v-divider"></div>
-                  </>
-                )}
-                <div className="i-icon" onClick={changeViewMode}>
-                  {settings.showGrid ? (
-                    <i
-                      className="fas fa-bars"
-                      title={`Listanézet`}
-                      aria-hidden="true"
-                    ></i>
-                  ) : (
-                    <i
-                      className="fas fa-table"
-                      title={`Rácsnézet`}
-                      aria-hidden="true"
-                    ></i>
-                  )}
-                </div>
-                <div
-                  className={`i-icon ${settings.InfoPanelOn && 'active'}`}
-                  onClick={openInfo}
-                >
-                  <i
-                    className="fas fa-info-circle"
-                    title={`Részletek megjelenítése`}
-                    aria-hidden="true"
-                  ></i>
-                </div>
+                {selected.length === 1 &&
+                  iconList
+                    .filter((icon) => icon.visibility === 'one' && icon.show)
+                    .map((icon, index) => iconListPaint(icon, index))}
+                {selected.length > 0 &&
+                  iconList
+                    .filter((icon) => icon.visibility === 'multiple' && icon.show)
+                    .map((icon, index) => iconListPaint(icon, index))}
+                {selected.length > 0 && <div className="v-divider"></div>}
+                {iconList
+                  .filter((icon) => icon.visibility === 'always' && icon.show)
+                  .map((icon, index) => iconListPaint(icon, index))}
               </div>
             </div>
-            <div {...getRootProps()}>
-              <input {...getInputProps()} />
-              {isDragActive ? (
-                <p>Drop the files here ...</p>
-              ) : (
-                <p>Drag 'n' drop some files here, or click to select files</p>
-              )}
-            </div>
             <div className="file-panel">
-              {settings.showGrid ? (
-                <Grid
-                  pageID={pageID}
-                  loading={loading}
-                  setSelected={setSelected}
-                  setPageID={setPageID}
-                  settings={settings}
-                  changeSort={changeSort}
-                  folders={folders}
-                  files={files}
-                />
-              ) : (
-                <Table
-                  pageID={pageID}
-                  loading={loading}
-                  setSelected={setSelected}
-                  setPageID={setPageID}
-                  settings={settings}
-                  changeSort={changeSort}
-                  folders={folders}
-                  files={files}
-                />
-              )}
-              <InfoPanel
-                selected={selected}
-                folders={folders}
-                files={files}
-                settings={settings}
-                selected={selected}
-                pageData={pageData}
-                closeInfo={openInfo}
-              />
+              <div className={`dragarea ${isDragActive && 'is-dragover'}`} {...getRootProps()}>
+                <input {...getInputProps()} />
+                {settings.showGrid ? (
+                  <Grid
+                    loading={loading}
+                    setSelected={setSelected}
+                    settings={settings}
+                    changeSort={changeSort}
+                    dragActive={isDragActive}
+                  />
+                ) : (
+                  <Table
+                    loading={loading}
+                    setSelected={setSelected}
+                    settings={settings}
+                    changeSort={changeSort}
+                    dragActive={isDragActive}
+                  />
+                )}
+              </div>
+              <InfoPanel selected={selected} settings={settings} closeInfo={openInfo} />
             </div>
           </div>
-          <input
-            type="file"
-            id="file"
-            style={{ display: 'none' }}
-            webkitdirectory=""
-            directory=""
-            multiple=""
-          />
         </form>
       )}
     </div>
