@@ -10,6 +10,14 @@ const FileProvider = ({ children }) => {
   const [pageData, setPageData] = useState([]);
   const [folders, setFolders] = useState([]);
   const [files, setFiles] = useState([]);
+  const [contextMenu, setContextMenu] = useState({
+    isOn: false,
+    show: '',
+    position: {
+      x: 0,
+      y: 0,
+    },
+  });
 
   const Location = useLocation();
   const [pageID, setPageID] = useState(Location.pathname.split('/').pop());
@@ -42,26 +50,53 @@ const FileProvider = ({ children }) => {
   const getData = async () => {
     try {
       const location = Location.pathname.split('/').pop();
-      if (location) {
-        setPageID(location);
-        const { data } = await authAxios.get('/', {
-          params: {
-            PGID: pageID,
-          },
-        });
+      setPageID(location);
+      const { data } = await authAxios.get('/', {
+        params: {
+          PGID: pageID || location,
+        },
+      });
 
-        const { queryData, queryItems } = data;
+      const { queryData, queryItems } = data;
 
-        setPageData(queryData);
-        setFolders(queryItems.dirs);
-        setFiles(queryItems.files);
+      setPageData(queryData);
+      setFolders(queryItems.dirs);
+      setFiles(queryItems.files);
 
-        return true;
-      }
-      throw new Error();
+      return true;
     } catch (error) {
       throw new Error(error);
     }
+  };
+
+  const replaceItem = async (from, to) => {
+    try {
+      const { data } = await authAxios.post('/replace', {
+        from,
+        to,
+      });
+
+      if (data.ok === 1) return true;
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
+
+  const postionXY = (event) => {
+    let Xoffset = 0;
+    let Yoffset = 0;
+
+    if (window.innerWidth - event.clientX <= 350) {
+      Xoffset = 350;
+    }
+    if (window.innerHeight - event.clientY <= 160.85) {
+      Yoffset = 160.85;
+    }
+
+    return {
+      x: event.clientY - 70 - Yoffset,
+      y: event.clientX - Xoffset,
+    };
   };
 
   return (
@@ -69,6 +104,7 @@ const FileProvider = ({ children }) => {
       value={{
         fileUpload,
         getData,
+        replaceItem,
         pageData,
         setPageData,
         folders,
@@ -77,6 +113,20 @@ const FileProvider = ({ children }) => {
         setFiles,
         pageID,
         setPageID,
+        contextMenu,
+        setContextMenuOn: (event, show) => {
+          const position = postionXY(event);
+
+          // const { parentElement } = event.target;
+          // const selectedElement = parentElement.href !== undefined ? parentElement.href : parentElement.querySelector('a').href;
+
+          // console.log(parentElement, selectedElement);
+
+          setContextMenu({ isOn: !contextMenu.isOn, show, position });
+        },
+        setContextMenuOff: () => {
+          if (contextMenu.isOn) setContextMenu({ ...contextMenu, isOn: false });
+        },
       }}
     >
       {children}

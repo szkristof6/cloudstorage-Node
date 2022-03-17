@@ -105,6 +105,19 @@ ul {
   margin: 0 !important;
 }
 
+.middle {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
 .logo {
   display: flex;
   flex-direction: row;

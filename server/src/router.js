@@ -10,6 +10,8 @@ const Directories = require('./models/directories');
 const { getPaths, getContainingDirectory } = require('./functions/utils');
 
 const { upload } = require('./functions/upload');
+const { replace } = require('./functions/replace');
+
 
 const router = Router();
 const uploadPath = path.resolve('../data');
@@ -187,6 +189,8 @@ const uploadHandler = multer({
 });
 
 router.post('/upload', uploadHandler.array('files'), upload);
+
+router.post('/replace', replace);
 
 router.get('/deleteDB', async (req, res, next) => {
   try {

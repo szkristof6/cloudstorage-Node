@@ -1,5 +1,6 @@
 const jwt = require('express-jwt');
 const jwtDecode = require('jwt-decode');
+const requestIP = require('request-ip');
 
 const notFound = (req, res, next) => {
   const error = new Error(`Not found - ${req.originalUrl}`);
@@ -24,7 +25,7 @@ const requireAuth = jwt({
   audience: 'api.cloud.szkt',
   issuer: 'api.cloud.szkt',
   algorithms: ['HS256'],
-  getToken: (req) => req.cookies.TKN,
+  getToken: (request) => request.cookies.TKN,
 });
 
 const attachUser = (req, res, next) => {

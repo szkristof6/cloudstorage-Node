@@ -11,7 +11,7 @@ const Header = () => {
   const { authState } = auth;
 
   return (
-    <div className="header">
+    <div className="header" onContextMenu={(e) => e.preventDefault()}>
       <div className="logo" title={`Martin Cloud`}>
         <figure className="image is-48x48">
           <img className="is-rounded" alt="Logo" src={Logo} />

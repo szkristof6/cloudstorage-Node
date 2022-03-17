@@ -14,7 +14,7 @@ const LoginSchema = Yup.object().shape({
   password: Yup.string().required('Add meg a jelszavad!'),
 });
 
-const createToken = (user) => {
+const createToken = (user, ipAddress) => {
   // Sign the JWT
   if (!user.role) {
     throw new Error('No user role specified');
@@ -25,6 +25,7 @@ const createToken = (user) => {
       username: user.username,
       email: user.email,
       role: user.role,
+      ipAddress,
       iss: 'api.cloud.szkt',
       aud: 'api.cloud.szkt',
     },
@@ -32,7 +33,7 @@ const createToken = (user) => {
     {
       algorithm: 'HS256',
       expiresIn: '1h',
-    }
+    },
   );
 };
 

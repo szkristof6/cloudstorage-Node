@@ -1,6 +1,6 @@
-const requestIP = require('request-ip');
-const jwtDecode = require('jwt-decode');
-const UserData = require('../models/userData');
+const requestIP = require("request-ip");
+const jwtDecode = require("jwt-decode");
+const UserData = require("../models/userData");
 
 const {
   RegisterSchema,
@@ -8,13 +8,17 @@ const {
   createToken,
   hashPassword,
   verifyPassword,
-} = require('./utils');
+} = require("./utils");
 
 const login = async (req, res, next) => {
   try {
-    const Validiation = await LoginSchema.isValid(req.body);
-    if (!Validiation) {
-      return res.status(403).json({ message: 'Nincs minden mező kitöltve!' });
+    if (req.recaptcha.error) {
+      return res.status(403).json({ message: req.recaptcha.error });
+    }
+
+    const Validation = await LoginSchema.isValid(req.body);
+    if (!Validation) {
+      return res.status(403).json({ message: "Nincs minden mező kitöltve!" });
     }
 
     const { username, password } = req.body;
@@ -25,7 +29,7 @@ const login = async (req, res, next) => {
     if (!user) {
       return res
         .status(403)
-        .json({ message: 'Rossz felhasználónév vagy jelszó' });
+        .json({ message: "Rossz felhasználónév vagy jelszó" });
     }
 
     const passwordValid = await verifyPassword(password, user.password);
@@ -34,21 +38,21 @@ const login = async (req, res, next) => {
       const { password, ...rest } = user;
       const userInfo = { ...rest };
 
-      const token = createToken(userInfo);
+      const token = createToken(userInfo, requestIP.getClientIp(req));
       const decodedToken = jwtDecode(token);
       const expiresAt = decodedToken.exp;
 
-      res.cookie('TKN', token, {
+      res.cookie("TKN", token, {
         httpOnly: true,
         secure: true,
       });
 
-      res.cookie('EXPAT', expiresAt, {
+      res.cookie("EXPAT", expiresAt, {
         secure: true,
       });
 
       return res.json({
-        message: 'Sikeres belépés!',
+        message: "Sikeres belépés!",
         token,
         userInfo,
         expiresAt,
@@ -56,9 +60,9 @@ const login = async (req, res, next) => {
     }
     return res
       .status(403)
-      .json({ message: 'Rossz felhasználónév vagy jelszó' });
+      .json({ message: "Rossz felhasználónév vagy jelszó" });
   } catch (error) {
-    if (error.name === 'ValidationError') {
+    if (error.name === "ValidationError") {
       res.status(422);
     }
     next(error);
@@ -79,9 +83,13 @@ const login = async (req, res, next) => {
 
 const register = async (req, res, next) => {
   try {
+    if (req.recaptcha.error) {
+      return res.status(403).json({ message: req.recaptcha.error });
+    }
+
     const Validation = await RegisterSchema.isValid(req.body);
     if (!Validation) {
-      return res.status(403).json({ message: 'Nincs minden mező kitöltve!' });
+      return res.status(403).json({ message: "Nincs minden mező kitöltve!" });
     }
 
     const { email, username, password } = req.body;
@@ -91,7 +99,7 @@ const register = async (req, res, next) => {
       email: email.toLowerCase(),
       username,
       password: encryptedPassword,
-      role: 'user',
+      role: "user",
       active: true,
       login_ip: requestIP.getClientIp(req),
     };
@@ -114,16 +122,16 @@ const register = async (req, res, next) => {
       const decodedToken = jwtDecode(token);
       const expiresAt = decodedToken.exp;
 
-      res.cookie('TKN', token, {
+      res.cookie("TKN", token, {
         httpOnly: true,
       });
 
-      res.cookie('EXPAT', expiresAt, {
+      res.cookie("EXPAT", expiresAt, {
         secure: true,
       });
 
       return res.json({
-        message: 'User sikeresen létrehozva!',
+        message: "User sikeresen létrehozva!",
         token,
         userInfo: {
           username: savedUser.username,
@@ -134,9 +142,9 @@ const register = async (req, res, next) => {
         expiresAt,
       });
     }
-    return res.status(400).json({ message: 'Valami probléma történt' });
+    return res.status(400).json({ message: "Valami probléma történt" });
   } catch (error) {
-    if (error.name === 'ValidationError') {
+    if (error.name === "ValidationError") {
       res.status(422);
     }
     next(error);

@@ -18,6 +18,7 @@ import Grid from './panels/Grid';
 import Table from './panels/Table';
 import Message from './form/Message';
 import Loader from './Loader';
+import ContextMenu from './dropdown/ContextMenu';
 
 import { FileContext } from '../services/FileContext';
 
@@ -33,7 +34,7 @@ const Area = () => {
   });
 
   const fileContext = useContext(FileContext);
-  const { fileUpload, getData, folders, setFolders, files, setFiles, pageID, setPageID, pageData } =
+  const { fileUpload, getData, folders, setFolders, files, setFiles, pageID, setPageID, pageData, contextMenu, setContextMenuOn } =
     fileContext;
 
   const sortByName = (x, y) => {
@@ -182,7 +183,7 @@ const Area = () => {
                   {pageData.length > 0 &&
                     pageData.map((url) => (
                       <li key={url._id}>
-                        {pageID === 'my-drive' || 'trash' ? (
+                        {['my-drive', 'trash'].includes(pageID) ? (
                           <a>{url.name}</a>
                         ) : url._id === 0 ? (
                           <Link onClick={() => setPageID('my-drive')} to={`/drive/my-drive`}>
@@ -213,8 +214,9 @@ const Area = () => {
               </div>
             </div>
             <div className="file-panel">
-              <div className={`dragarea ${isDragActive && 'is-dragover'}`} {...getRootProps()}>
-                <input {...getInputProps()} />
+              <div className={`dragarea `} onContextMenu={(event) => setContextMenuOn(event, 'item')}> 
+              {/* ${isDragActive && 'is-dragover'} {...getRootProps()} */}
+               {/* <input {...getInputProps()} /> */}
                 {settings.showGrid ? (
                   <Grid
                     loading={loading}

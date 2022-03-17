@@ -41,8 +41,6 @@ const Header = lazy(() => import('./parts/Header'));
 const Content = lazy(() => import('./parts/Content'));
 const Login = lazy(() => import('./parts/Login'));
 const Register = lazy(() => import('./parts/Register'));
-const TestSite = lazy(() => import('./parts/TestSite'));
-
 
 const AuthenticatedRoute = ({ children, ...rest }) => {
   const authContext = useContext(AuthContext);
@@ -93,9 +91,6 @@ const AppRoutes = () => {
           <Header />
           <Content />
         </AuthenticatedRoute>
-        <AdminRoute path="/admin" exact>
-          <TestSite />
-        </AdminRoute>
       </Switch>
     </Suspense>
   );

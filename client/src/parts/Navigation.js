@@ -7,15 +7,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolder, faShareAlt, faTrash, faHdd, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import { humanReadableByte } from '../global';
-import Create from './dropdown/Create';
+import ContextMenu from './dropdown/ContextMenu';
 
 const Navigation = () => {
   const [storage, setStorage] = useState([]);
-  const [dropdownActive, setdropdownActive] = useState(false);
 
   const auth = useContext(AuthContext);
   const fetchContext = useContext(FetchContext);
-  const {pageID} = useContext(FileContext);
+  const { pageID, contextMenu, setContextMenuOn} = useContext(FileContext);
   const { role } = auth.authState.userInfo;
 
   const navItems = [
@@ -51,19 +50,19 @@ const Navigation = () => {
 
   return (
     <div className="navbar">
-      <div className={`dropdown ${dropdownActive ? 'is-active' : ''}`} id="new">
+      <div className={`dropdown ${contextMenu.isOn ? 'is-active' : ''}`} id="new">
         <div className="dropdown-trigger">
           <button
             className="button is-medium is-rounded new"
             aria-haspopup="true"
             aria-controls="dropdown-menu"
-            onClick={() => setdropdownActive(!dropdownActive)}
+            onClick={(event) => setContextMenuOn(event, 'create')}
           >
             <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
             <span>Új</span>
           </button>
         </div>
-        <Create id="new" />
+        <ContextMenu id="new" />
       </div>
       <ul className="n-ul">
         {navItems.map((item, index) => (

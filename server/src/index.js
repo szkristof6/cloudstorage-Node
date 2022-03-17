@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const Recaptcha = require('express-recaptcha').RecaptchaV2;
 
 require('dotenv').config();
 
@@ -21,17 +22,19 @@ mongoose.connect(process.env.DATABASE_URL, {
   useUnifiedTopology: true,
 });
 
+const recaptcha = new Recaptcha(process.env.SITE_KEY, process.env.PRIVATE_KEY);
+
 app.use(morgan('common'));
 app.use(helmet());
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
-  })
+  }),
 );
 app.use(express.json());
 
-app.post('/register', register);
-app.post('/login', login);
+app.post('/register', recaptcha.middleware.verify, register);
+app.post('/login', recaptcha.middleware.verify, login);
 
 app.use(cookieParser());
 app.use(attachUser);

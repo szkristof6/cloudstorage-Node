@@ -8,7 +8,7 @@ Project Description
 - [ ] Skeleton.js  
 - [ ] filePreviews when possible  
 - [x] Sessions  
-- [ ] contentMenu  
+- [x] contentMenu  
 - [ ] Share  
 - [x] Shared  
 - [] Shared Page Custom Things
@@ -20,7 +20,7 @@ Project Description
 - [ ] Sort by type  
 - [x] List view  
 - [x] onDoubleClick Event  
-- [ ] Dropdown menus  
+- [ ] Dropdown menus 
 - [x] Authorization  
 - [] Place in Trash 
 - [x] Trash 
@@ -28,7 +28,17 @@ Project Description
 
 - [x] Folder create in database on upload
 
+- [] Folder create modal
+
+- [] Sortable JS drag to folder error
+
+- [] Item Dropdown show only when item is selected otherwise show create
+
 - [x] Icon show 
+- [] uploadQueue
+- [] Drag 'n Drop Folder
+
+- [] Cross Site Forgery token middleware
 
 ### In Progress
 

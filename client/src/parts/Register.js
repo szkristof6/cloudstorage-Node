@@ -1,9 +1,11 @@
+import React from "react";
 import * as Yup from 'yup';
 import { Form, Formik, Field, ErrorMessage } from 'formik';
 import { useState, useContext } from 'react';
 import { Redirect } from 'react-router-dom';
 import { PublicFetch } from '../services/API';
 import { AuthContext } from '../services/authContext';
+import ReCAPTCHA from "react-google-recaptcha";
 import Message from './form/Message';
 import Logo from '../static/Logo.png';
 
@@ -22,6 +24,21 @@ const Register = () => {
   const [registerError, setRegisterError] = useState();
   const [registerSuccess, setRegisterSuccess] = useState();
   const [redirectOnLogin, setRedirectOnLogin] = useState(false);
+
+  const recaptchaRef = React.createRef();
+
+  const recaptchaSubmit = async (credentials) => {
+    try {
+      const token = await recaptchaRef.current.executeAsync();
+
+      submitCredentials({
+        'g-recaptcha-response': token,
+        ...credentials
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const submitCredentials = async (credentials) => {
     try {
@@ -64,12 +81,17 @@ const Register = () => {
                       email: '',
                       password: '',
                     }}
-                    onSubmit={(values) => submitCredentials(values)}
+                    onSubmit={(values) => recaptchaSubmit(values)}
                     validationSchema={RegisterSchema}
                   >
                     <Form>
                       {registerSuccess && <Message state="is-success" text={registerSuccess} />}
                       {registerError && <Message state="is-danger" text={registerError} />}
+                      <ReCAPTCHA
+                        sitekey="6LfrmuoeAAAAAPJXK7KZKT6KuUAPTZMjgF2MbpNZ"
+                        ref={recaptchaRef}
+                        size="invisible"
+                      />
                       <div className="field is-horizontal">
                         <div className="field-label is-normal">
                           <label className="label">Felhasználónév</label>

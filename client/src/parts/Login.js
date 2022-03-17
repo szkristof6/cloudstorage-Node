@@ -1,18 +1,20 @@
-import * as Yup from 'yup';
-import { Form, Formik, Field, ErrorMessage } from 'formik';
-import { useState, useContext } from 'react';
-import { Redirect } from 'react-router-dom';
-import { PublicFetch } from '../services/API';
-import { AuthContext } from '../services/authContext';
-import Message from './form/Message';
-import Logo from '../static/Logo.png';
+import React from "react";
+import * as Yup from "yup";
+import { Form, Formik, Field, ErrorMessage } from "formik";
+import { useState, useContext } from "react";
+import { Redirect } from "react-router-dom";
+import { PublicFetch } from "../services/API";
+import { AuthContext } from "../services/authContext";
+import ReCAPTCHA from "react-google-recaptcha";
+import Message from "./form/Message";
+import Logo from "../static/Logo.png";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faLock } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 
 const LoginSchema = Yup.object().shape({
-  username: Yup.string().required('Add meg a felhasználóneved!'),
-  password: Yup.string().required('Add meg a jelszavad!'),
+  username: Yup.string().required("Add meg a felhasználóneved!"),
+  password: Yup.string().required("Add meg a jelszavad!"),
 });
 
 const Login = () => {
@@ -22,17 +24,33 @@ const Login = () => {
   const [redirectOnLogin, setRedirectOnLogin] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
 
+  const recaptchaRef = React.createRef();
+
+  const recaptchaSubmit = async (credentials) => {
+    try {
+      const token = await recaptchaRef.current.executeAsync();
+
+      submitCredentials({
+        'g-recaptcha-response': token,
+        ...credentials
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const submitCredentials = async (credentials) => {
     try {
       setLoginLoading(true);
-      const { data } = await PublicFetch.post('login', credentials);
+
+      const { data } = await PublicFetch.post("login", credentials);
 
       authContext.setAuthState(data);
       setLoginSuccess(data.message);
       setLoginError(null);
       setTimeout(() => {
         setRedirectOnLogin(true);
-      }, 700);
+      }, 700); 
     } catch (error) {
       setLoginLoading(false);
       const { data } = error.response;
@@ -46,10 +64,7 @@ const Login = () => {
       {redirectOnLogin && <Redirect to="/drive/my-drive" />}
       <div className="container">
         <div className="logo is-justify-content-center login-logo">
-          <figure className="image is-login">
-            <img className="is-rounded" src={Logo} alt="Logo" />
-          </figure>
-          <div className="s-name">Martin Cloud</div>
+          <div className="s-name">Bejelentkezés</div>
         </div>
         <div className="columns is-justify-content-center">
           <div className="column is-three-fifths">
@@ -59,15 +74,24 @@ const Login = () => {
                 <div className="login">
                   <Formik
                     initialValues={{
-                      username: '',
-                      password: '',
+                      username: "",
+                      password: "",
                     }}
-                    onSubmit={(values) => submitCredentials(values)}
+                    onSubmit={(values) => recaptchaSubmit(values)}
                     validationSchema={LoginSchema}
                   >
                     <Form>
-                      {loginSuccess && <Message state="is-success" text={loginSuccess} />}
-                      {loginError && <Message state="is-danger" text={loginError} />}
+                      {loginSuccess && (
+                        <Message state="is-success" text={loginSuccess} />
+                      )}
+                      {loginError && (
+                        <Message state="is-danger" text={loginError} />
+                      )}
+                      <ReCAPTCHA
+                        sitekey="6LfrmuoeAAAAAPJXK7KZKT6KuUAPTZMjgF2MbpNZ"
+                        ref={recaptchaRef}
+                        size="invisible"
+                      />
                       <div className="field is-horizontal">
                         <div className="field-label is-normal">
                           <label className="label">Felhasználónév</label>
@@ -82,7 +106,9 @@ const Login = () => {
                                 placeholder="Add meg a felhasználónevedet"
                               />
                               <span className="icon is-small is-left">
-                                <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+                                <FontAwesomeIcon
+                                  icon={faUser}
+                                ></FontAwesomeIcon>
                               </span>
                             </p>
                             <ErrorMessage name="username" component="div" />
@@ -103,7 +129,9 @@ const Login = () => {
                                 placeholder="Add meg a jelszavad"
                               />
                               <span className="icon is-small is-left">
-                                <FontAwesomeIcon icon={faLock}></FontAwesomeIcon>
+                                <FontAwesomeIcon
+                                  icon={faLock}
+                                ></FontAwesomeIcon>
                               </span>
                             </p>
                             <ErrorMessage name="password" component="div" />
