@@ -23,7 +23,7 @@
     "react-google-recaptcha": "^2.1.0",
     "react-loading-skeleton": "^2.2.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.3",
+    "react-scripts": "5.0.0",
     "sass": "^1.37.5",
     "selectable.js": "^0.17.8",
     "sortablejs": "^1.14.0",
